@@ -77,6 +77,7 @@ function CompetitionList(){
                             <tr>
                                 <th><button onClick={()=>handleFieldName("id")}>Id</button></th>
                                 <th><button onClick={()=>handleFieldName("name")}>Name</button></th>
+                                <th>Location</th>
                                 <th>Date</th>
                                 <th>Action</th>
                             </tr>
@@ -87,6 +88,7 @@ function CompetitionList(){
                                 <tr key={i}>
                                     <td><Link to={`/competitions/${comp.id}`}>{comp.id}</Link></td>
                                     <td>{comp.name}</td>
+                                    <td>{comp.location}, {comp.nation.name}</td>
                                     <td>{comp.date.toLocaleString().split(',')[0]}</td>
                                     <td>
                                         {

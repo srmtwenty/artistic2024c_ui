@@ -10,7 +10,7 @@ import AuthService from '../services/auth.service';
 function PersonList(){
     const [people, setPeople]=useState([])
     const [pName, setPName]=useState([])
-    //const [cont, setCont]=useState([])
+    const [cont, setCont]=useState([])
     const navigate=useNavigate();
 
     const user=AuthService.getCurrentUser();
@@ -20,6 +20,9 @@ function PersonList(){
     const [rowsPerPage,setRowsPerPage]=useState(10);
     const [str, setStr]=useState("")
     const [searchMode, setSearchMode]=useState(false);
+    const [nation, setNation]=useState("1");
+    const [nations, setNations]=useState([]);
+    const [allNations, setAllNations]=useState([])
 
     const loadPeople=()=>{
         axios.get("http://localhost:8080/people", {headers:authHeader()})
@@ -33,7 +36,9 @@ function PersonList(){
         loadPeople();
         loadPeoplePagination();
         loadPeopleByName();
-    },[page, field, rowsPerPage, field, str])
+        loadPeopleByNation();
+        loadAllNations();
+    },[page, field, rowsPerPage, field, str, nation])
 
     const deletePerson=(id)=>{
         axios.delete(`http://localhost:8080/people/${id}/delete`, {headers:authHeader()})
@@ -59,6 +64,26 @@ function PersonList(){
             .then(res=>setPName(res.data))
             .catch(err=>console.log(err))
     }
+
+    const loadPeopleByNation=()=>{
+        axios.get(`http://localhost:8080/people/searchNation/${nation}`, {headers:authHeader()})
+            .then(res=>
+                {
+                    setNations(res.data)
+                    setPeople(nations)
+            })
+            .catch(err=>console.log(err))
+    }
+
+    const loadAllNations=()=>{
+        axios.get("http://localhost:8080/nations", {headers:authHeader()})
+            .then(res=>{
+                setAllNations(res.data)
+                console.log(allNations)
+                }
+            )
+            .catch(err=>console.log(err))
+    }
     const handleFieldName=(field)=>{
         setField(field)
         //loadPeoplePagination();
@@ -81,6 +106,12 @@ function PersonList(){
         setStr(e.target.value)
         console.log(str)
     }
+    const handleChangeNation=(e)=>{
+        e.preventDefault()
+        setNation(e.target.value)
+        
+    }
+
     const title={
         padding:"10px 0 10px 0"
     }
@@ -89,15 +120,30 @@ function PersonList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {
-                people?
-                <>
-                <form>
-                    <div>
-                        <input type="text" onChange={handleChangeName}/>
+                {
+                    people?
+                    <>
+                    <div className="buttonsWrapDetail2">
+
+                        <form className="postDetail">
+                            <div>
+                                <input type="text" placeholder="Search Name" onChange={handleChangeName}/>
+                                <input type="submit" value="Search"/> 
+                            </div>
+                        </form>
+                        <form className="backToDetail">
+                            <div>
+                                <select id="nation" name="nation" onChange={handleChangeNation}>
+                                    {
+                                        allNations.map((nt, i)=>
+                                            <option key={i} value={nt.id}>{nt.name}</option>
+                                        )
+                                    }    
+                                </select>
+                                <input type="submit" value="Search Nation"/>
+                            </div> 
+                        </form>
                     </div>
-                    <input type="submit" value="Search"/> 
-                </form>
                 
                     <h2 style={title}>Person List</h2>
                     <div className="rowTable">
@@ -216,6 +262,61 @@ function PersonList(){
                 </div>:
                 <></>
             }
+
+                <div className="rowTable">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th><Link to="/people" onClick={()=>handleFieldName("id")}>Id</Link></th>
+                                    <th><Link to="/people" onClick={()=>handleFieldName("name")}>Name</Link></th>
+                                    <th>Description</th>
+                                    <th><Link to="/people" onClick={()=>handleFieldName("nationality")}>Nationality</Link></th>
+                                    <th>Gender</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            
+                                
+                                <tbody>
+                                {
+                                    
+                                    
+                                    nations.map((ps, i)=>(
+                                    <tr key={i}>
+                                        <td><Link to={`/people/${ps.id}`}>{ps.id}</Link></td>
+                                        <td>{ps.name}</td>
+                                        <td>{ps.description}</td>
+                                        <td>{
+                                            ps.nationality?
+                                            <>{ps.nationality.name}</>:
+                                            <>Null</>
+                                            }
+                                        </td>
+                                        <td>{ps.gender}</td>
+                                        <td>
+                                            {
+                                                user.roles.includes("ROLE_ADMIN")?
+                                                <div className="tdButtonWrapper">
+                                                    <div className="tdButtonContainer1">
+                                                        <Link className="link" to={`/people/${ps.id}/update`}>Edit</Link>    
+                                                    </div>
+                                                    <div className="tdButtonContainer2">
+                                                        <button onClick={()=>deletePerson(ps.id)}>Delete</button>
+                                                    </div>
+                                                </div>:
+                                                <></>
+                                            }
+                                            
+                                        </td>
+                                    </tr> 
+                                      
+                                    ))
+                                }
+                            </tbody>
+                        </table>   
+                        
+                    </div>
             </div>
             </div>
         </>
