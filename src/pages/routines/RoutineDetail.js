@@ -17,7 +17,13 @@ function RoutineDetail(){
     const [coaches, setCoaches]=useState([])
     const [competition, setCompetition]=useState(1)
     const [nationalTeam, setNationalTeam]=useState(1)
+    const [addresses, setAddresses]=useState([])
+    const [choreo, setChoreo]=useState(1)
+    
 
+    const [allChoreos, setAllChoreos]=useState([])
+    const [allAddresses, setAllAddresses]=useState([])
+    const [allSwimsuits, setAllSwimsuits]=useState([])
     const [allMusics, setAllMusics]=useState([])
     const [allPeople, setAllPeople]=useState([])
     const [allCompetitions, setAllCompetitions]=useState([])
@@ -40,6 +46,8 @@ function RoutineDetail(){
                 setCoaches(res.data.coaches)
                 setCompetition(res.data.competition)
                 setNationalTeam(res.data.nationalTeam)
+                setChoreo(res.data.choreographic)
+                
             })
             .catch(err=>console.log(err))
     }
@@ -71,12 +79,38 @@ function RoutineDetail(){
             })
             .catch(err=>console.log(err));
     }
+    const loadAllChoreos=()=>{
+        axios.get("http://localhost:8080/choreos", {headers:authHeader()})
+            .then(res=>{
+                setAllChoreos(res.data)
+            })
+            .catch(err=>console.log(err));
+    }
+    const loadAllAddresses=()=>{
+        axios.get("http://localhost:8080/addresses", {headers:authHeader()})
+            .then(res=>{
+                setAllAddresses(res.data)
+            })
+            .catch(err=>console.log(err));
+    }
+
+    
+    const loadAllSwimsuits=()=>{
+        axios.get("http://localhost:8080/swimsuits", {headers:authHeader()})
+            .then(res=>{
+                setAllSwimsuits(res.data)
+            })
+            .catch(err=>console.log(err));
+    }
     useEffect(()=>{
         loadRoutine();
         loadAllMusics();
         loadAllPeople();
         loadAllCompetitions();
         loadAllNationalTeams();
+        loadAllChoreos();
+        loadAllSwimsuits();
+        loadAllAddresses();
     }, [])
 
     const addMusic=(musicId)=>{
@@ -160,6 +194,25 @@ function RoutineDetail(){
             .catch(err=>console.log(err))
     }
 
+    const assignChoreo=(choreoId)=>{
+        axios.put(`http://localhost:8080/routines/${id}/setChoreo/${choreoId}`, {},{headers:authHeader()})
+            .then(res=>{
+                window.location.reload();
+                navigate(`/routines/${id}`)
+            })
+            .catch(err=>console.log(err))
+    }
+    const removeChoreo=(choreoId)=>{
+        axios.put(`http://localhost:8080/routines/${id}/removeChoreo/${choreoId}`, {},{headers:authHeader()})
+            .then(res=>{
+                window.location.reload();
+                navigate(`/routines/${id}`)
+            })
+            .catch(err=>console.log(err))
+    }
+
+
+
     return(
         <>
             <div className="profile_wrap2">
@@ -183,7 +236,7 @@ function RoutineDetail(){
                                 <span className="value"><Link to={`/competitions/${competition.id}`}>{competition.name}</Link>
                                 {
                                     user.roles.includes("ROLE_ADMIN")?
-                                    <button className="marginLeft" onClick={()=>removeCompetition(competition.id)}>Remove Competition</button>:
+                                    <button className="marginLeft" onClick={()=>removeCompetition(competition.id)}>x</button>:
                                     <></>
                                 }
                                 </span>
@@ -206,7 +259,24 @@ function RoutineDetail(){
                                 <><Link to={`/nationalTeams/${nationalTeam.id}`}>{nationalTeam.name}</Link>
                                     {
                                         user.roles.includes("ROLE_ADMIN")?
-                                        <button className="marginLeft" onClick={()=>removeNationalTeam(nationalTeam.id)}>Remove National Team</button>
+                                        <button className="marginLeft" onClick={()=>removeNationalTeam(nationalTeam.id)}>x</button>
+                                        :<></>
+                                    }
+                                    
+                                </>:
+                                <>Null</>
+                      
+                            }</span>
+                        </div>
+                        <div className="row2">
+                            <span className="label">Choreographic:</span>
+                            <span className="value">
+                            {   
+                                choreo?
+                                <><Link to={`/choreos/${choreo.id}`}>{choreo.name}</Link>
+                                    {
+                                        user.roles.includes("ROLE_ADMIN")?
+                                        <button className="marginLeft" onClick={()=>removeChoreo(choreo.id)}>x</button>
                                         :<></>
                                     }
                                     
@@ -233,7 +303,7 @@ function RoutineDetail(){
                                     <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link>
                                         {
                                             user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeMusic(music.id)}>Remove Music</button>
+                                            <button className="marginLeft" onClick={()=>removeMusic(music.id)}>x</button>
                                             :<></>
                                         }
                                     </li> 
@@ -243,7 +313,7 @@ function RoutineDetail(){
                             </ul>
                         </div>
                         <div className="row2">
-                            <span className="label2">Swimmers:</span>
+                            <span className="label2">Athletes:</span>
                             <ul className="ultest2">
                             {   
                                 swimmers?
@@ -251,7 +321,7 @@ function RoutineDetail(){
                                     <li key={i}><Link to={`/people/${swimmer.id}`}>{swimmer.name}</Link>
                                         {
                                             user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeSwimmer(swimmer.id)}>Remove Swimmer</button>
+                                            <button className="marginLeft" onClick={()=>removeSwimmer(swimmer.id)}>x</button>
                                             :<></>
                                         }
                                         
@@ -270,7 +340,7 @@ function RoutineDetail(){
                                     <li key={i}><Link to={`/people/${coach.id}`}>{coach.name}</Link>
                                         {
                                             user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeCoach(coach.id)}>Remove Coach</button>
+                                            <button className="marginLeft" onClick={()=>removeCoach(coach.id)}>x</button>
                                             :<></>
                                         }
                                     </li>
@@ -367,7 +437,7 @@ function RoutineDetail(){
                                             <td>
                                             <div className="tdButtonWrapper">
                                                 <div className="tdButtonContainer1">
-                                                    <button onClick={()=>addSwimmer(p.id)}>Add Swimmer</button>
+                                                    <button onClick={()=>addSwimmer(p.id)}>Add Athlete</button>
                                                 </div>
                                                 <div className="tdButtonContainer2">
                                                     <button onClick={()=>addCoach(p.id)}>Add Coach</button>
@@ -441,10 +511,72 @@ function RoutineDetail(){
                                     
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                     </div>
-                    </div>
                     
+                    <div className="profile_grid1">
+                    <h2>All Choreographic</h2>
+                        <div className="labelsPost">
+                            <div className="rowTable">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        allChoreos.map((ac, i)=>(
+                                        <tr key={i}>
+                                            <td>{ac.id}</td>
+                                            <td>{ac.name}</td>
+                                            <td>
+                                                <button onClick={()=>assignChoreo(ac.id)}>Add Choreo</button>   
+                                            </td>
+                                        </tr>
+                                        ))
+                                    }
+                                    
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div className="profile_grid1">
+                    <h2>All Swimsuits</h2>
+                        <div className="labelsPost">
+                            <div className="rowTable">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Id</th>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        allSwimsuits.map((as, i)=>(
+                                        <tr key={i}>
+                                            <td>{as.id}</td>
+                                            <td>{as.name}</td>
+                                            <td>
+                                                
+                                            </td>
+                                        </tr>
+                                        ))
+                                    }
+                                    
+                                </tbody>
+                            </table>
+                            </div>
+                        </div>
+                    </div>
                     </>
                     :<></>
                 }

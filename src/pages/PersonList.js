@@ -28,9 +28,11 @@ function PersonList(){
         axios.get("http://localhost:8080/people", {headers:authHeader()})
             .then(res=>{
                 setTotal(res.data.length)
+                console.log(res.data)
             })
             .catch(err=>console.log(err))
     }
+    
 
     useEffect(()=>{
         loadPeople();
@@ -38,6 +40,7 @@ function PersonList(){
         loadPeopleByName();
         loadPeopleByNation();
         loadAllNations();
+       
     },[page, field, rowsPerPage, field, str, nation])
 
     const deletePerson=(id)=>{
@@ -145,16 +148,18 @@ function PersonList(){
                         </form>
                     </div>
                 
-                    <h2 style={title}>Person List</h2>
+                    <h2 style={title}>Athlete && Coach List</h2>
                     <div className="rowTable">
                         <table>
                             <thead>
                                 <tr>
-                                    <th><Link to="/people" onClick={()=>handleFieldName("id")}>Id</Link></th>
-                                    <th><Link to="/people" onClick={()=>handleFieldName("name")}>Name</Link></th>
+                                    <th><Link className="table_field" to="/people" onClick={()=>handleFieldName("id")}>Id</Link></th>
+                                    <th><Link className="table_field" to="/people" onClick={()=>handleFieldName("name")}>Name</Link></th>
+                                    <th>Photo</th>
                                     <th>Description</th>
-                                    <th><Link to="/people" onClick={()=>handleFieldName("nationality")}>Nationality</Link></th>
+                                    <th><Link className="table_field" to="/people" onClick={()=>handleFieldName("nationality")}>Nationality</Link></th>
                                     <th>Gender</th>
+                                    <th>Occupation</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -169,6 +174,13 @@ function PersonList(){
                                     <tr key={i}>
                                         <td><Link to={`/people/${person.id}`}>{person.id}</Link></td>
                                         <td>{person.name}</td>
+                                        <td>
+                                        {
+                                                person.profilePic?
+                                                <img src={`http://localhost:8080/files/${person.profilePic.url}`} style={{width:"100px"}} />
+                                                :<></>
+                                            }
+                                        </td>
                                         <td>{person.description}</td>
                                         <td>{
                                             person.nationality?
@@ -177,6 +189,13 @@ function PersonList(){
                                             }
                                         </td>
                                         <td>{person.gender}</td>
+                                        <td>{
+                                            person.occupations.map((o, i)=>(
+                                                <li key={i}>{o.name}</li>
+                                            ))}
+                                            
+
+                                        </td>
                                         <td>
                                             {
                                                 user.roles.includes("ROLE_ADMIN")?
@@ -263,6 +282,9 @@ function PersonList(){
                 <></>
             }
 
+
+            {/*
+
                 <div className="rowTable">
                         <table>
                             <thead>
@@ -316,7 +338,7 @@ function PersonList(){
                             </tbody>
                         </table>   
                         
-                    </div>
+                            </div>*/}
             </div>
             </div>
         </>

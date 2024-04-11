@@ -168,7 +168,7 @@ function NationalTeamDetail(){
                                                     ))
                                                 }</ul>
                                             </td>
-                                            <td><button onClick={()=>removePerson(m.id)}>Remove Member</button></td>
+                                            <td><button onClick={()=>removePerson(m.id)}>x</button></td>
                                         </tr>    
                                         ))
                                     }

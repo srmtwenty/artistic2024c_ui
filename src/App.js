@@ -21,6 +21,11 @@ import BoardAdmin from './components/BoardAdmin';
 //import Navbar from './components/Navbar';
 //import Navbar1 from './components/Navbar1';
 
+import AddressList from './pages/AddressList';
+import AddressPost from './pages/addresses/AddressPost';
+import AddressDetail from './pages/addresses/AddressDetail';
+import AddressUpdate from './pages/addresses/AddressUpdate';
+
 import ArticleList from './pages/ArticleList';
 import ArticlePost from './pages/articles/ArticlePost';
 import ArticleDetail from './pages/articles/ArticleDetail';
@@ -36,6 +41,11 @@ import BroadcastPost from './pages/broadcasts/BroadcastPost';
 import BroadcastDetail from './pages/broadcasts/BroadcastDetail';
 import BroadcastUpdate from './pages/broadcasts/BroadcastUpdate';
 
+import ChoreoList from './pages/ChoreoList';
+import ChoreoPost from './pages/choreographic/ChoreoPost';
+import ChoreoDetail from './pages/choreographic/ChoreoDetail';
+import ChoreoUpdate from './pages/choreographic/ChoreoUpdate';
+
 import CompetitionList from './pages/CompetitionList';
 import CompetitionPost from './pages/competitions/CompetitionPost';
 import CompetitionDetail from './pages/competitions/CompetitionDetail';
@@ -45,6 +55,10 @@ import ComposerList from './pages/ComposerList';
 import ComposerPost from './pages/composers/ComposerPost';
 import ComposerDetail from './pages/composers/ComposerDetail';
 import ComposerUpdate from './pages/composers/ComposerUpdate';
+
+import ImageList from './pages/ImageList';
+import ImagePost from './pages/images/ImagePost';
+import ImageDetail from './pages/images/ImageDetail';
 
 import MusicList from './pages/MusicList';
 import MusicPost from './pages/musics/MusicPost';
@@ -76,6 +90,16 @@ import SoundtrackPost from './pages/soundtracks/SoundtrackPost';
 import SoundtrackDetail from './pages/soundtracks/SoundtrackDetail';
 import SoundtrackUpdate from './pages/soundtracks/SoundtrackUpdate';
 
+import SwimsuitList from './pages/SwimsuitList';
+import SwimsuitPost from './pages/swimsuits/SwimsuitPost';
+import SwimsuitDetail from './pages/swimsuits/SwimsuitDetail';
+import SwimsuitUpdate from './pages/swimsuits/SwimsuitUpdate';
+
+import SwimsuitDetailList from './pages/SwimsuitDetailList';
+import SwimsuitDetailPost from './pages/swimsuitDetails/SwimsuitDetailPost';
+import SwimsuitDetailDetail from './pages/swimsuitDetails/SwimsuitDetailDetail';
+import SwimsuitDetailUpdate from './pages/swimsuitDetails/SwimsuitDetailUpdate';
+
 import TagList from './pages/TagList';
 import TagPost from './pages/tags/TagPost';
 import TagDetail from './pages/tags/TagDetail';
@@ -86,6 +110,7 @@ import OccupationPost from './pages/occupations/OccupationPost';
 import OccupationDetail from './pages/occupations/OccupationDetail';
 import OccupationUpdate from './pages/occupations/OccupationUpdate';
 
+import MainPage from './pages/MainPage';
 
 function App() {
   
@@ -125,7 +150,7 @@ function App() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
 
-      <Nav defaultActiveKey="/home">
+      <Nav defaultActiveKey="/">
             <Nav.Link href="/nationalTeams">Teams</Nav.Link>
             <Nav.Link href="/nations">Nations</Nav.Link>
             
@@ -149,6 +174,17 @@ function App() {
               <NavDropdown.Item href="/articles">Articles</NavDropdown.Item>
               <NavDropdown.Item href="/broadcasts">
                 Broadcasts
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/images">Images</NavDropdown.Item>
+              <NavDropdown.Item href="/addresses">
+                Addresses
+              </NavDropdown.Item>
+              <NavDropdown.Item href="/swimsuitDetails">
+                SwimsuitDetails
+              </NavDropdown.Item>
+           
+              <NavDropdown.Item href="/choreos">
+                Choreographic
               </NavDropdown.Item>
             </NavDropdown>
 
@@ -208,8 +244,8 @@ function App() {
       
       <div className="container mt-3">
         <Routes>
-          <Route path="/" element={<Home/>} />
-          <Route path="/home" element={<Home/>} />
+          <Route path="/" element={<MainPage/>} />
+          
           <Route path="/login" element={<Login/>} />
           <Route path="/register" element={<Register/>} />
           <Route path="/profile" element={<Profile/>} />
@@ -232,11 +268,20 @@ function App() {
           <Route currentUser={currentUser} exact path="/artists/:id" element={<ArtistDetail/>}/>
           <Route exact path="/artists/:id/update" element={<ArtistUpdate/>}/>
 
+          <Route path="/addresses" element={<AddressList/>}/>
+          <Route exact path="/addresses/create" element={<AddressPost/>}/>
+          <Route exact path="/addresses/:id" element={<AddressDetail/>}/>
+          <Route exact path="/addresses/:id/update" element={<AddressUpdate/>}/>
+
           <Route path="/broadcasts" element={<BroadcastList/>}/>
           <Route exact path="/broadcasts/create" element={<BroadcastPost/>}/>
           <Route exact path="/broadcasts/:id" element={<BroadcastDetail/>}/>
           <Route exact path="/broadcasts/:id/update" element={<BroadcastUpdate/>}/>
 
+          <Route path="/choreos" element={<ChoreoList/>}/>
+          <Route exact path="/choreos/create" element={<ChoreoPost/>}/>
+          <Route exact path="/choreos/:id" element={<ChoreoDetail/>}/>
+          <Route exact path="/choreos/:id/update" element={<ChoreoUpdate/>}/>
 
           <Route path="/competitions" element={<CompetitionList/>}/>
           <Route exact path="/competitions/create" element={<CompetitionPost/>}/>
@@ -247,6 +292,10 @@ function App() {
           <Route exact path="/composers/create" element={<ComposerPost/>}/>
           <Route exact path="/composers/:id" element={<ComposerDetail/>}/>
           <Route exact path="/composers/:id/update" element={<ComposerUpdate/>}/>
+
+          <Route path="/images" element={<ImageList/>}/>
+          <Route exact path="/images/create" element={<ImagePost/>}/>
+          <Route currentUser={currentUser} exact path="/images/:id" element={<ImageDetail/>}/>
 
           <Route path="/musics" element={<MusicList/>}/>  
           <Route exact path="/musics/create" element={<MusicPost/>}/>
@@ -282,6 +331,17 @@ function App() {
           <Route exact path="/soundtracks/create" element={<SoundtrackPost/>}/>
           <Route exact path="/soundtracks/:id" element={<SoundtrackDetail/>}/>
           <Route exact path="/soundtracks/:id/update" element={<SoundtrackUpdate/>}/>
+
+          
+          <Route path="/swimsuits" element={<SwimsuitList/>}/>
+          <Route exact path="/swimsuits/create" element={<SwimsuitPost/>}/>
+          <Route exact path="/swimsuits/:id" element={<SwimsuitDetail/>}/>
+          <Route exact path="/swimsuits/:id/update" element={<SwimsuitUpdate/>}/>
+
+          <Route path="/swimsuitDetails" element={<SwimsuitDetailList/>}/>
+          <Route exact path="/swimsuitDetails/create" element={<SwimsuitDetailPost/>}/>
+          <Route exact path="/swimsuitDetails/:id" element={<SwimsuitDetailDetail/>}/>
+          <Route exact path="/swimsuitDetails/:id/update" element={<SwimsuitDetailUpdate/>}/>
 
           <Route path="/tags" element={<TagList/>}/>
           <Route exact path="/tags/create" element={<TagPost/>}/>

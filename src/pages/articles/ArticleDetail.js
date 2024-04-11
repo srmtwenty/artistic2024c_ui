@@ -151,7 +151,7 @@ function ArticleDetail(){
                                     <li key={i}><Link to={`/people/${p.id}`}>{p.name}</Link>
                                         {
                                             user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removePerson(p.id)}>Remove Person</button>
+                                            <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
                                             :<></>
                                         }
                                         
@@ -288,7 +288,7 @@ function ArticleDetail(){
                                             <td>{tag.name}</td>
                                             <td>
                                                 <button onClick={()=>addTag(tag.id)}>Add Tag</button>
-                                                <button onClick={()=>removeTag(tag.id)}>Remove Tag</button>
+                                                <button onClick={()=>removeTag(tag.id)}>x</button>
                                             </td>
                                         </tr>
                                         ))

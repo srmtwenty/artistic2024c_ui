@@ -156,7 +156,7 @@ function MusicDetail(){
                                 <><Link to={`/soundtracks/${soundtrack.id}`}>{soundtrack.name}
                                     {
                                         user.roles.includes("ROLE_ADMIN")?
-                                        <button className="marginLeft" onClick={()=>removeSoundtrack(soundtrack.id)}>Remove Soundtrack</button>:
+                                        <button className="marginLeft" onClick={()=>removeSoundtrack(soundtrack.id)}>x</button>:
                                         <></>
                                     }
                                     
@@ -173,7 +173,7 @@ function MusicDetail(){
                                     <li key={i}><Link to={`/artists/${composer.id}`}>{composer.name}</Link>
                                     {
                                         user.roles.includes("ROLE_ADMIN")?
-                                        <button className="marginLeft" onClick={()=>removeComposer(composer.id)}>Remove Composer</button>:
+                                        <button className="marginLeft" onClick={()=>removeComposer(composer.id)}>x</button>:
                                         <></>
                                     }
                                     </li>
@@ -189,7 +189,7 @@ function MusicDetail(){
                                     <li key={i}><Link to={`/artists/${artist.id}`}>{artist.name}</Link>
                                     {
                                         user.roles.includes("ROLE_ADMIN")?
-                                        <button className="marginLeft" onClick={()=>removeArtist(artist.id)}>Remove Artist</button>
+                                        <button className="marginLeft" onClick={()=>removeArtist(artist.id)}>x</button>
                                         :<></>
                                     }
                                     </li>
@@ -206,7 +206,7 @@ function MusicDetail(){
                                     <li key={i}><a href={ml.name}>{ml.name}</a>
                                     {
                                         user.roles.includes("ROLE_ADMIN")?
-                                        <button className="marginLeft" onClick={()=>removeSNS(ml.id)}>Remove Link</button>
+                                        <button className="marginLeft" onClick={()=>removeSNS(ml.id)}>x</button>
                                         :<></>
                                     }
                                     </li>

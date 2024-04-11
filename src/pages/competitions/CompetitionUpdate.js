@@ -8,6 +8,7 @@ function CompetitionUpdate(){
     const [description, setDescription]=useState("")
     const [location, setLocation]=useState("")
     const [date, setDate]=useState(new Date());
+    const [endDate, setEndDate]=useState(new Date());
     const {id}=useParams();
     const navigate=useNavigate();
     const loadCompetition=()=>{
@@ -17,6 +18,7 @@ function CompetitionUpdate(){
                 setDescription(res.data.description)
                 setLocation(res.data.location)
                 setDate(res.data.date)
+                setEndDate(res.data.endDate)
                 //setNation(res.data.nation)
             })
             .catch(err=>console.log(err))
@@ -31,7 +33,8 @@ function CompetitionUpdate(){
             name:name,
             description:description,
             location:location,
-            date:date
+            date:date,
+            endDate:endDate
         }, {headers:authHeader()})
             .then(res=>{
                 navigate(`/competitions/${id}`)
@@ -60,6 +63,10 @@ function CompetitionUpdate(){
                     <div className="row2">
                         <label className="labelPost">Date:</label>
                         <input type="date" onChange={(e)=>setDate(e.target.value)} value={date}/>
+                    </div>
+                    <div className="row2">
+                        <label className="labelPost">End Date:</label>
+                        <input type="date" onChange={(e)=>setEndDate(e.target.value)} value={endDate}/>
                     </div>
                     <div className="updateButtonsWrap">
                         <div className="updateButtonSubmit">

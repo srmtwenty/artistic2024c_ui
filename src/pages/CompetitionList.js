@@ -14,12 +14,14 @@ function CompetitionList(){
     const [total, setTotal]=useState(-1);
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
+    //const [compNationName, setCompNationName]=useState("")
 
     const user=AuthService.getCurrentUser();
     const loadCompetitions=()=>{
         axios.get("http://localhost:8080/competitions", {headers:authHeader()})
             .then(res=>{
                 setTotal(res.data.length)
+                console.log(res.data)
             })
             .catch(err=>console.log(err))
     }
@@ -34,9 +36,7 @@ function CompetitionList(){
             .then(res=>{
                 window.location.reload();
                 navigate("/competitions")
-            }
-                
-            )
+            })
             .catch(err=>console.log(err))
     }
     const loadCompetitionsPagination=()=>{
@@ -88,8 +88,30 @@ function CompetitionList(){
                                 <tr key={i}>
                                     <td><Link to={`/competitions/${comp.id}`}>{comp.id}</Link></td>
                                     <td>{comp.name}</td>
-                                    <td>{comp.location}, {comp.nation.name}</td>
-                                    <td>{comp.date.toLocaleString().split(',')[0]}</td>
+                                    <td>{comp.location},<br></br>
+                                        {
+                                            comp.nation?
+                                            <>{comp.nation.name}</>:
+                                            <>null</>
+                                        }
+                                    </td>
+                                    <td>{
+                                        comp.date?
+                                        <>
+                                            {comp.date.toLocaleString().split(',')[0]}
+                                        </>:
+                                        <>
+                                            null
+                                        </>
+                                        }<br></br>
+                                        {
+                                        comp.endDate?
+                                        <>
+                                            {comp.endDate.toLocaleString().split(',')[0]}
+                                        </>:
+                                        <>null</>
+                                        }
+                                    </td>
                                     <td>
                                         {
                                             user.roles.includes("ROLE_ADMIN")?

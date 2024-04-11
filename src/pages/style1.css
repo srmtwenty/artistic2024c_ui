@@ -11,9 +11,9 @@
   background-color:rgb(237, 255, 249);
   padding-top:10px;
   padding-bottom :10px;
-  
+  border: 2px solid green;
   margin:0 auto 0 auto;
-  width:90%;
+  width:100%;
 
 }
 
@@ -40,6 +40,18 @@
   align-items:baseline;
 
 }
+
+.row2FlexChild{
+  background-color:white;
+  width:100%;
+  margin:auto;
+  text-align:left;
+  padding:0.3em 1em 0.3em 1em;
+  display:flex;
+  align-items:baseline;
+
+}
+
 .rowTextArea{
   background-color:white;
   width:90%;
@@ -59,8 +71,8 @@
   margin:auto;
   font-size:1.2em;
   line-height: 1.5em;
-  width:60%;
-  background-color: #f2f2f2;
+  width:90%;
+  background-color: white;
   border:0.4px solid;
   border-radius:0.4em;
 }
@@ -224,7 +236,7 @@ tbody tr:last-of-type{
 .buttonsWrapDetail{
   margin:auto;
   padding:1em 0 2em 0;
-  width:60%;
+  width:80%;
 }
 .buttonsWrapDetail2{
   margin:auto;
@@ -304,4 +316,20 @@ button{
 button:hover{
   background-color:#515151;
   color:white;
+}
+
+.table_field:link, .table_field:visited {
+  color: rgb(255, 255, 255);
+  padding: 0.2em 0.5em 0.2em 0.5em;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.table_field:hover, .table_field:active {
+  color: rgb(0, 0, 0);
+}
+
+p, div, span{
+  font-size:15px;
 }

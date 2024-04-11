@@ -9,6 +9,7 @@ function CompetitionDetail(){
     const [description, setDescription]=useState("")
     const [location, setLocation]=useState("")
     const [date, setDate]=useState(new Date());
+    const [endDate, setEndDate]=useState(new Date());
     const [nation, setNation]=useState(1);
     const [allNations, setAllNations]=useState([])
 
@@ -22,7 +23,9 @@ function CompetitionDetail(){
                 setDescription(res.data.description)
                 setLocation(res.data.location)
                 setDate(res.data.date)
+                setEndDate(res.data.endDate)
                 setNation(res.data.nation)
+                console.log(res.data)
             })
             .catch(err=>console.log(err))
     }
@@ -90,7 +93,19 @@ function CompetitionDetail(){
                         </div>
                         <div className="row2">
                             <span className="label">Date: </span>
-                            <span className="value">{date.toLocaleString().split(',')[0]}</span>
+                            <span className="value">
+                                {date!=null?
+                                <>{date.toLocaleString().split(',')[0]}</>
+                                :<></>}
+                            </span>
+                        </div>
+                        <div className="row2">
+                            <span className="label">End Date: </span>
+                            <span className="value">
+                                {endDate!=null?
+                                <>{endDate.toLocaleString().split(',')[0]}</>
+                                :<></>}
+                            </span>
                         </div>
                         <div className="row2">
                             <p>{description}</p> 
@@ -146,12 +161,9 @@ function CompetitionDetail(){
                                             <td>{nation.id}</td>
                                             <td><Link to={`/nations/${nation.id}`}>{nation.name}</Link></td>
                                             <td>
-                                                
                                                     
                                                     <button onClick={()=>assignNation(nation.id)}>Assign Nation</button>
                                                    
-                                                
-                                                  
                                             </td>
                                         </tr>    
                                         ))

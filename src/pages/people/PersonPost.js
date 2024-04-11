@@ -22,7 +22,7 @@ function PersonPost(){
             //}
         }, {headers:authHeader()})
             .then(res=>{
-                navigate("/people")
+                navigate(`/people/${res.data.id}`)
             })
             .catch(err=>console.log(err))
     }
