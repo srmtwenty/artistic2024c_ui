@@ -90,7 +90,7 @@ function ComposerList(){
         
                                 <td>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <div className="tdButtonWrapper">
                                             <div className="tdButtonContainer1">
                                                 <Link className="link" to={`/composers/${com.id}/update`}>Edit</Link>    
@@ -123,7 +123,7 @@ function ComposerList(){
             <h2>Composer List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/composers/create">Create Composer</Link>
                 </div>:

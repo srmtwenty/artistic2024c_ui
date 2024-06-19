@@ -7,6 +7,7 @@ function PersonUpdate(){
     const [name, setName]=useState("")
     const [description, setDescription]=useState("")
     const [gender, setGender]=useState(0)
+    const [profilePicAlt, setProfilePicAlt]=useState("")
 
     const {id}=useParams();
     const navigate=useNavigate();
@@ -17,6 +18,7 @@ function PersonUpdate(){
                 setName(res.data.name)
                 setDescription(res.data.description)
                 setGender(res.data.gender)
+                setProfilePicAlt(res.data.profilePicAlt)
                 //setNationality(res.data.nationality)
             })
             .catch(err=>console.log(err))
@@ -30,7 +32,8 @@ function PersonUpdate(){
         axios.put(`http://localhost:8080/people/${id}/update`, {
             name:name,
             description:description,
-            gender:gender
+            gender:gender,
+            profilePicAlt:profilePicAlt
         }, {headers:authHeader()})
             .then(res=>{
                 navigate(`/people/${id}`)
@@ -51,6 +54,10 @@ function PersonUpdate(){
                             <div className="rowTextArea">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="4" cols="50" onChange={(e)=>setDescription(e.target.value)} value={description}/>
+                            </div>
+                            <div className="row2">
+                                <label className="labelPost">Profile Pic Alt:</label>
+                                <input type="text" onChange={(e)=>setProfilePicAlt(e.target.value)} value={profilePicAlt}/>
                             </div>
                             <div className="row2">
                                 <label className="labelPost">Gender:</label>

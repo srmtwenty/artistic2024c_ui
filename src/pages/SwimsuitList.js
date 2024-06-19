@@ -95,7 +95,7 @@ function SwimsuitList(){
                                         </td>
                                         <td>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
                                                     <div className="tdButtonContainer1">
                                                         <Link className="link" to={`/swimsuits/${ss.id}/update`}>Edit</Link>    
@@ -120,7 +120,7 @@ function SwimsuitList(){
             
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/swimsuits/create">Create Swimsuit</Link>
                 </div>:

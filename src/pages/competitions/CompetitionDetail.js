@@ -12,6 +12,7 @@ function CompetitionDetail(){
     const [endDate, setEndDate]=useState(new Date());
     const [nation, setNation]=useState(1);
     const [allNations, setAllNations]=useState([])
+    const [routines, setRoutines]=useState([])
 
     const user=AuthService.getCurrentUser();
     const {id}=useParams()
@@ -34,10 +35,21 @@ function CompetitionDetail(){
             .then(res=>{
                 setAllNations(res.data)
             })
+            .catch(err=>console.log(err))
     }
+    const loadRoutines=()=>{
+        axios.get(`http://localhost:8080/competitions/${id}/routines`, {headers:authHeader()})
+            .then(res=>{
+                setRoutines(res.data)
+                console.log(res.data)
+            })
+            .catch(err=>console.log(err))
+    }
+    
     useEffect(()=>{
         loadCompetition();
         loadAllNations();
+        loadRoutines();
     },[])
 
     const assignNation=(nationId)=>{
@@ -61,16 +73,9 @@ function CompetitionDetail(){
             {name!=""?
                 <>
                 <div className="profile_grid1">
-                    <h2>Competition: <strong>{name}</strong></h2>
+                    <h2>Comp: <strong>{name} (id: {id})</strong></h2>
                     <div className="labels">
-                        <div className="row2">
-                            <span className="label">Id: </span>
-                            <span className="value">{id}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Name: </span>
-                            <span className="value">{name}</span>
-                        </div>
+                        
                         <div className="row2">
                             <span className="label">Location: </span>
                             <span className="value">{location}</span>
@@ -82,7 +87,7 @@ function CompetitionDetail(){
                                 nation?
                                 <><Link to={`/nations/${nation.id}`}>{nation.name}</Link>
                                 {
-                                    user.roles.includes("ROLE_ADMIN")?
+                                    user && user.roles.includes("ROLE_ADMIN")?
                                     <button className="marginLeft" onClick={()=>removeNation(nation.id)}>x</button>
                                     :<></>
                                 }
@@ -109,17 +114,31 @@ function CompetitionDetail(){
                         </div>
                         <div className="row2">
                             <p>{description}</p> 
+                        </div> 
+
+                        <div className="row2">
+                            <span className="label2">Routines:</span>
+                            <ul className="ultest2">
+                            {
+                                routines?
+                                routines.map((r, i)=>(
+                                    <li><Link to={`/routines/${r.id}`}>{r.name}</Link></li>        
+                                ))
+                                :<>Null</>
+                            }
+                            </ul>
                         </div>  
                     </div>
+                    
                 </div>
                 <div className="buttonsWrapDetail">
                     {
-                        user.roles.includes("ROLE_ADMIN")?
+                        user && user.roles.includes("ROLE_ADMIN")?
                         <>
                         <div className="postDetail">
                             <Link className="link" to="/competitions/create">Post Competition</Link>
                         </div>
-                        <div>
+                        <div style={{display:"flex"}}>
                             <div className="backToDetail">
                                 <Link className="link" to={`/competitions/${id}/update`}>Update</Link>
                             </div>
@@ -140,7 +159,7 @@ function CompetitionDetail(){
                 
 
                 {
-                    user.roles.includes("ROLE_ADMIN")?
+                    user && user.roles.includes("ROLE_ADMIN")?
                     <div className="profile_grid1">
                     <h2>All Nations</h2>
                         <div className="labelsPost">

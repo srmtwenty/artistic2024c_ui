@@ -1,7 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Nav from 'react-bootstrap/Nav';
 import Container from 'react-bootstrap/Container';
@@ -118,9 +118,16 @@ function App() {
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [currentUser, setCurrentUser] = useState(undefined);
 
+  const myDivRef=useRef(null);
+
+  const handleClick=()=>{
+    console.log(myDivRef.current.textContent);
+  }
+
   useEffect(() => {
     const user = AuthService.getCurrentUser();
-
+    
+    
     if (user) {
       setCurrentUser(user);
       setShowModeratorBoard(user.roles.includes("ROLE_MODERATOR"));
@@ -145,7 +152,7 @@ function App() {
   return (
     <div className="App">
       <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
-      <Container style={{backgroundColor:"#7df4ff", padding:"2em", fontSize:"1.2em"}}>
+      <Container style={{backgroundColor:"white", borderBottom:"1px solid", padding:"1em", fontSize:"1.2em", width:"100%"}}>
         <Navbar.Brand href="/">Home</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -242,7 +249,8 @@ function App() {
       </Container>
     </Navbar>
       
-      <div className="container mt-3">
+      <div>
+        
         <Routes>
           <Route path="/" element={<MainPage/>} />
           
@@ -350,6 +358,9 @@ function App() {
         
         </Routes>
       </div>
+
+     
+      
     </div>
   );
 }

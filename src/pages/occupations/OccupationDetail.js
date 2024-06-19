@@ -38,12 +38,12 @@ function OccupationDetail(){
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                             <div className="postDetail">
                                 <Link className="link" to="/occupations/create">Post</Link>  
                             </div>
-                            <div>
+                            <div style={{display:"flex"}}>
                                 <div className="backToDetail">
                                     <Link className="link" to="/occupations">Back to List</Link>
                                 </div>
@@ -58,7 +58,6 @@ function OccupationDetail(){
                                     <Link className="link" to="/occupations">Back to List</Link>
                                 </div>
                             </>
-
                         }
                         
                     </div>

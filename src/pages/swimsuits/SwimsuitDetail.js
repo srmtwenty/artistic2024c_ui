@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import authHeader from '../../services/auth-header';
-
+import AuthService from '../../services/auth.service';
 function SwimsuitDetail(){
     const [name, setName]=useState("")
     const [description, setDescription]=useState("")
@@ -11,7 +11,7 @@ function SwimsuitDetail(){
     
     const [people, setPeople]=useState([])
     const [allPeople, setAllPeople]=useState([])
-
+    const user=AuthService.getCurrentUser();
     const navigate=useNavigate();
     const {id}=useParams();
 
@@ -122,7 +122,12 @@ function SwimsuitDetail(){
                                             <td><Link to={`/people/${ap.id}`}>{ap.name}</Link></td>
                                         
                                             <td>
-                                                <button onClick={()=>addPerson(ap.id)}>Add Person</button>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <button onClick={()=>addPerson(ap.id)}>Add Person</button>
+                                                    :<></>
+                                                }
+                                                
                                             </td>
                                         </tr>
                                         ))

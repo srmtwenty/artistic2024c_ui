@@ -18,6 +18,7 @@ function SwimsuitDetailList(){
             .then(res=>
                 {
                     setSwimsuitDetails(res.data)
+                    console.log(res.data)
                 }
             )
             .catch(err=>console.log(err))
@@ -53,6 +54,7 @@ function SwimsuitDetailList(){
                                 <th>Id</th>
                                 <th>Name</th>
                                 <th>Content</th>
+                                <th>People</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -69,13 +71,20 @@ function SwimsuitDetailList(){
                                                 <img src={`http://localhost:8080/files/${sd.swimsuitProfilePic.url}`} style={{height:"150px"}}/>
                                             </>:
                                             <>No Profile Pic</>
-                                        }
-                                        
-                                        
+                                        }  
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            {
+                                                sd.peopleForSwimsuit.map((p, i)=>
+                                                <li key={i}><Link to={`/people/${p.id}`}>{p.name}</Link></li>
+                                                )
+                                            }
+                                        </ul>
                                     </td>
                                     <td>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <div className="tdButtonWrapper">
                                                 <div className="tdButtonContainer1">
                                                     <Link className="link" to={`/swimsuitDetails/${sd.id}/update`}>Edit</Link>    
@@ -101,7 +110,7 @@ function SwimsuitDetailList(){
                     <h2>SwimsuitDetail List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/swimsuitDetails/create">Create Swimsuit Detail</Link>
                 </div>:

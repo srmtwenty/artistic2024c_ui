@@ -96,7 +96,7 @@ function ArtistList(){
                                     <td>{artist.name}</td>
                                     <td>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <div className="tdButtonWrapper">
                                                 <div className="tdButtonContainer1">
                                                     <Link className="link" to={`/artists/${artist.id}/update`}>Edit</Link>    
@@ -130,7 +130,7 @@ function ArtistList(){
                 <h2>Artist List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/artists/create">Post Artist</Link>
                 </div>:

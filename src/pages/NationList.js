@@ -91,7 +91,7 @@ function NationList(){
                              
                                 <td>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <div className="tdButtonWrapper">
                                             <div className="tdButtonContainer1">
                                                 <Link className="link" to={`/nations/${nation.id}/update`}>Edit</Link>    
@@ -128,7 +128,7 @@ function NationList(){
                     <h2>Nation List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/nations/create">Create Nation</Link>
                 </div>:

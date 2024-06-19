@@ -96,7 +96,7 @@ function RoutineList(){
                                         <td>{r.date.toLocaleString().split(',')[0]}</td>
                                         <td>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
                                                     <div className="tdButtonContainer1">
                                                         <Link className="link" to={`/routines/${r.id}/update`}>Edit</Link>    
@@ -132,7 +132,7 @@ function RoutineList(){
                     <h2>Routine List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/routines/create">Create Routine</Link>
                 </div>:

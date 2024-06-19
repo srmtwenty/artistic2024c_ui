@@ -20,7 +20,7 @@ function PersonList(){
     const [rowsPerPage,setRowsPerPage]=useState(10);
     const [str, setStr]=useState("")
     const [searchMode, setSearchMode]=useState(false);
-    const [nation, setNation]=useState("1");
+    const [nation, setNation]=useState(0);
     const [nations, setNations]=useState([]);
     const [allNations, setAllNations]=useState([])
 
@@ -40,6 +40,8 @@ function PersonList(){
         loadPeopleByName();
         loadPeopleByNation();
         loadAllNations();
+            
+        
        
     },[page, field, rowsPerPage, field, str, nation])
 
@@ -54,8 +56,9 @@ function PersonList(){
     const loadPeoplePagination=()=>{
         axios.get(`http://localhost:8080/people/${page}/${rowsPerPage}/${field}`, {headers:authHeader()})
             .then(res=>{ 
-                //console.log(res.data.content)  
+                console.log(people)  
                 setPeople(res.data.content)
+                console.log(res.data.content)
                 //console.log(users.length)
                 //setUsers(res.data)
                 
@@ -69,11 +72,13 @@ function PersonList(){
     }
 
     const loadPeopleByNation=()=>{
+        
         axios.get(`http://localhost:8080/people/searchNation/${nation}`, {headers:authHeader()})
             .then(res=>
                 {
                     setNations(res.data)
                     setPeople(nations)
+                    
             })
             .catch(err=>console.log(err))
     }
@@ -105,7 +110,6 @@ function PersonList(){
 
     const handleChangeName=(e)=>{
         e.preventDefault()
-       
         setStr(e.target.value)
         console.log(str)
     }
@@ -123,29 +127,35 @@ function PersonList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
+                  
                 {
                     people?
                     <>
-                    <div className="buttonsWrapDetail2">
-
-                        <form className="postDetail">
-                            <div>
-                                <input type="text" placeholder="Search Name" onChange={handleChangeName}/>
-                                <input type="submit" value="Search"/> 
-                            </div>
-                        </form>
-                        <form className="backToDetail">
-                            <div>
-                                <select id="nation" name="nation" onChange={handleChangeNation}>
-                                    {
-                                        allNations.map((nt, i)=>
-                                            <option key={i} value={nt.id}>{nt.name}</option>
-                                        )
-                                    }    
-                                </select>
-                                <input type="submit" value="Search Nation"/>
-                            </div> 
-                        </form>
+                    
+                    <div style={{display:"flex", justifyContent:"space-between", margin:"auto",maxWidth:"1000px"}}>
+                        <div className="postDetail">
+                            <form>
+                                <div>
+                                    <input type="text" placeholder="Search Name" onChange={handleChangeName}/>
+                                    <input type="submit" value="Search"/> 
+                                </div>
+                            </form>
+                        </div>
+                        <div className="backToDetail">
+                            <form>
+                                <div>
+                                    <select id="nation" name="nation" onChange={handleChangeNation}>
+                                        <option>Select Nation</option>
+                                        {
+                                            allNations.map((nt, i)=>
+                                                <option key={i} value={nt.id}>{nt.name}</option>
+                                            )
+                                        }    
+                                    </select>
+                                    <input type="submit" value="Search Nation"/>
+                                </div> 
+                            </form>
+                        </div>
                     </div>
                 
                     <h2 style={title}>Athlete && Coach List</h2>
@@ -173,11 +183,11 @@ function PersonList(){
                                     people.map((person, i)=>(
                                     <tr key={i}>
                                         <td><Link to={`/people/${person.id}`}>{person.id}</Link></td>
-                                        <td>{person.name}</td>
+                                        <td><Link to={`/people/${person.id}`}>{person.name}</Link></td>
                                         <td>
                                         {
-                                                person.profilePic?
-                                                <img src={`http://localhost:8080/files/${person.profilePic.url}`} style={{width:"100px"}} />
+                                                person.profilePicAlt?
+                                                <img src={`http://localhost:8080/files/${person.profilePicAlt}`} style={{width:"100px"}} />
                                                 :<></>
                                             }
                                         </td>
@@ -189,16 +199,20 @@ function PersonList(){
                                             }
                                         </td>
                                         <td>{person.gender}</td>
-                                        <td>{
-                                            person.occupations.map((o, i)=>(
-                                                <li key={i}>{o.name}</li>
-                                            ))}
-                                            
-
+                                        <td>
+                                            <ul className="ultest2">
+                                            {
+                                                person.occupations.map((o, i)=>(
+                                                <li key={i} className="list-block">
+                                                    {o.name}
+                                                </li>
+                                            ))
+                                            }
+                                            </ul>
                                         </td>
                                         <td>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
                                                     <div className="tdButtonContainer1">
                                                         <Link className="link" to={`/people/${person.id}/update`}>Edit</Link>    
@@ -234,7 +248,7 @@ function PersonList(){
                                     <td>{person.gender}</td>
                                     <td>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <div className="tdButtonWrapper">
                                                 <div className="tdButtonContainer1">
                                                     <Link className="link" to={`/people/${person.id}/update`}>Edit</Link>    
@@ -275,7 +289,7 @@ function PersonList(){
                     <h2>Person List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/people/create">Create Person</Link>
                 </div>:

@@ -86,7 +86,7 @@ function OccupationList(){
                                     <td>{oc.name}</td>
                                     <td>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <div className="tdButtonWrapper">
                                                 <div className="tdButtonContainer1">
                                                     <Link className="link" to={`/occupations/${oc.id}/update`}>Edit</Link>    
@@ -121,7 +121,7 @@ function OccupationList(){
                     <h2>Occupation List is Empty</h2>
                 }
                 {
-                    user.roles.includes("ROLE_ADMIN")?
+                    user && user.roles.includes("ROLE_ADMIN")?
                     <div className="createLink">
                         <Link className="link" to="/occupations/create">Post Occupation</Link>
                     </div>:

@@ -14,6 +14,9 @@ function SwimsuitDetailDetail(){
     const [people, setPeople]=useState([])
     const [allPeople, setAllPeople]=useState([])
     const [swimsuitProfilePic, setSwimsuitProfilePic]=useState(0)
+    const [person, setPerson]=useState(null)
+    const [personId, setPersonId]=useState(0)
+    const [routines, setRoutines]=useState([])
 
     const {id}=useParams();
     const user=AuthService.getCurrentUser();
@@ -46,7 +49,7 @@ function SwimsuitDetailDetail(){
             .catch(err=>console.log(err))
     }
     const loadAllPeople=()=>{
-        axios.get("http://localhost:8080/people", {headers:authHeader()})
+        axios.get("http://localhost:8080/people/orderByNameAsc", {headers:authHeader()})
             .then(res=>{
                 setAllPeople(res.data)
             })
@@ -59,6 +62,22 @@ function SwimsuitDetailDetail(){
             })
             .catch(err=>console.log(err))
     }
+    const loadPerson=(personId)=>{
+        axios.get(`http://localhost:8080/people/${personId}`,{headers:authHeader()})
+            .then(res=>{
+                setPerson(res.data)
+                console.log(person)
+            })
+            .catch(err=>console.log(err))
+    }
+    const loadRoutines=()=>{
+        axios.get(`http://localhost:8080/swimsuitDetails/${id}/getRoutines`,{headers:authHeader()})
+            .then(res=>{
+                setRoutines(res.data)
+                console.log(res.data)
+            })
+            .catch(err=>console.log(err))
+    }
 
     useEffect(()=>{
         loadSwimsuitDetail();
@@ -66,7 +85,9 @@ function SwimsuitDetailDetail(){
         loadAllSwimsuits();
         loadAllPeople();
         loadPeople();
-    },[])
+        loadPerson(personId);
+        loadRoutines();
+    },[personId])
 
     const addSwimsuit=(swimsuitId)=>{
         axios.put(`http://localhost:8080/swimsuitDetails/${id}/addSwimsuit/${swimsuitId}`, {},{headers:authHeader()})
@@ -110,7 +131,7 @@ function SwimsuitDetailDetail(){
             , {},{headers:authHeader()})
             .then(res=>{
                 console.log("Person has been added")
-                window.location.reload();
+                //window.location.reload();
                 navigate(`/swimsuitDetails/${id}`)
             })
     }
@@ -123,14 +144,19 @@ function SwimsuitDetailDetail(){
                 navigate(`/swimsuitDetails/${id}`)
             })
     }
+    const handleChangePerson=(e)=>{
+        e.preventDefault();
+        setPersonId(e.target.value);
+        console.log(personId);
+    }
 
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
+                {
+                    name!=""?
                 <>
                 <div className="profile_grid1">
-                    
                         
                     <div className="labels">
                         <h2><strong>{name}</strong></h2>
@@ -140,10 +166,10 @@ function SwimsuitDetailDetail(){
                                     swimsuitProfilePic?
                                     <>
                                     <Link to={`/images/${swimsuitProfilePic.url}`}>
-                                        <img src={`http://localhost:8080/files/${swimsuitProfilePic.url}`} style={{width:"300px"}}/>
+                                        <img src={`http://localhost:8080/files/${swimsuitProfilePic.url}`} style={{width:"100%", maxWidth:"700px"}}/>
                                     </Link>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <button className="marginLeft" onClick={()=>removeSwimsuitProfilePic(swimsuitProfilePic.id)}>x</button>
                                             :<></>
                                         }
@@ -153,7 +179,6 @@ function SwimsuitDetailDetail(){
                             </span>
                         </div>
                        
-                        
                         <div className="row2">
                             <p>{description}</p> 
                         </div> 
@@ -167,85 +192,89 @@ function SwimsuitDetailDetail(){
                         </div>
 
 
+                        <div className="row2">
+                            <span className="label2">Athletes:</span>
+                            <ul className="ultest2">
+                            {   
+                                people?
+                                people.map((p, i)=>(
+                                    <li key={i}><Link to={`/people/${p.id}`}>{p.name}</Link>
+                                        {
+                                            user && user.roles.includes("ROLE_ADMIN")?
+                                            <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
+                                            :<></>
+                                        }
+                                        
+                                    
+                                    </li>
+                                )):
+                                <>null</>
+                            }</ul>
+                        </div>
+
+                        <div className="row2">
+                            <span className="label2">Routines:</span>
+                            <ul className="ultest2">
+                            {   
+                                routines?
+                                routines.map((r, i)=>(
+                                    <li key={i}>
+                                        <Link to={`/routines/${r.id}`}>{r.name}</Link>
+                                    </li>
+                                )):
+                                <>null</>
+                            }</ul>
+                        </div>
 
 
                         <div className="profile_grid1">
-                        {swimsuits.length!=0?
-                        <>
-                            <h2>Swimsuit photos</h2>
-                
-                            <div className="rowTable">
-                                <div style={{display:"flex", flexWrap:"wrap"}}>
-                                    {
-                                        swimsuits.map((swimsuit, i)=>(
-                                        <div key={i} style={{display:"block"}}>
-                                            <Link to={`/images/${swimsuit.url}`}>
-                                                <img style={{height:"150px", padding: "5px"}} src={`http://localhost:8080/files/${swimsuit.url}`}/>
-                                                </Link>
-                                            
-                                            <div>
-                                                <button onClick={()=>removeSwimsuit(swimsuit.id)}>x</button>
-                                            </div>
-                                        </div>
-                                    ))
-                                    }
-                                </div>
-                            </div>
-                        </>:
-                        <h2>Swimsuit List is Empty</h2>
-                        }
-                    </div> 
-
-
-                <div className="profile_grid1">
-                {people.length!==0?
-                <>
-                    <h2>People List</h2>
-         
-                    <div className="rowTable">
-                        <div>
                             {
-                                people.map((person, i)=>(
-                                    <div key={i}>
-                                        <Link to={`/people/${person.id}`}>
-                                            {person.name}
-                                        </Link>
-                                    
-                                    <div>
-                                        <button onClick={()=>removePerson(person.id)}>x</button>
+                            swimsuits.length!=0?
+                            <>
+                                <h2>Swimsuit photos</h2>
+                    
+                                <div className="rowTable">
+                                    <div style={{display:"flex", flexWrap:"wrap"}}>
+                                        {
+                                            swimsuits.map((swimsuit, i)=>(
+                                            <div key={i} style={{display:"block"}}>
+                                                <Link to={`/images/${swimsuit.url}`}>
+                                                    <img style={{height:"150px", padding: "5px"}} src={`http://localhost:8080/files/${swimsuit.url}`}/>
+                                                </Link>
+                                                
+                                                <div>
+                                                    <button onClick={()=>removeSwimsuit(swimsuit.id)}>x</button>
+                                                </div>
+                                            </div>
+                                        ))
+                                        }
                                     </div>
                                 </div>
-                            ))
+                            </>:
+                            
+                            <h2>Swimsuit Photo List is Empty</h2>
+                            
                             }
-                        </div>
+                        </div> 
                     </div>
-                </>:
-                <h2>People List is Empty</h2>
-            }
-                    
-                </div> 
-                    </div>
-
-
-                    
 
 
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
-                            <div className="postDetail">
-                                <Link className="link" to="/swimsuitDetails/create">Post</Link> 
-                            </div>
-                            <div>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/swimsuitDetails">Back to List</Link>
+                                <div className="postDetail">
+                                    <Link className="link" to="/swimsuitDetails/create">Post</Link> 
                                 </div>
-                                <div className="backToDetail">
-                                    <Link className="link" to={`/swimsuitDetails/${id}/update`}>Update</Link>
+                                <div style={{display:"flex"}}>
+                                    <div className="backToDetail">
+                                        <Link className="link" to="/swimsuitDetails">Back to List</Link>
+                                    </div>
+                                    <div className="backToDetail">
+                                        <Link className="link" to={`/swimsuitDetails/${id}/update`}>Update</Link>
+                                    </div>
+                                    
                                 </div>
-                                
-                            </div>
                             </>:
                             <>
                                 <div>
@@ -255,93 +284,53 @@ function SwimsuitDetailDetail(){
                                 </div>
                             </>
                         }
-                        
                     </div>
 
-                    
                 </div>
 
 
-                
-
-                
 
                 {
-                    user.roles.includes("ROLE_ADMIN")?
-                    <>
+                user && user.roles.includes("ROLE_ADMIN")?
+                <>
+                    <div className="profile_grid1">
+                        <h2>All People</h2>
+                        <select id="person" name="person" onChange={handleChangePerson}>
+                            <option>Null</option>
+                        {
+                            allPeople.map((ap, i)=>(
+                                <option key={i} value={ap.id}>{ap.name}</option>
+                            ))
+                        }
+                        </select>
+                        <button onClick={()=>addPerson(personId)}>Add Person</button>
+                    </div>
+                    
+                    
                     <div className="profile_grid1">
                         <h2>All A.Images</h2>
-                   
-                            <div className="rowTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Content</th>
-
-                                        <th>Action</th>
+                        <div className="rowTable">      
+                            <div style={{display:"flex", flexWrap:"wrap", margin:"auto"}}>
+                            {
+                                allSwimsuits.map((as, i)=>(
+                                    <div key={i} style={{display:"block", border:"1px solid", backgroundColor:"gray", width:"200px"}}>
                                         
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allSwimsuits.map((as, i)=>(
-                                        <tr key={i}>
-                                            <td>{as.id}</td>
-                                            <td>
-                                                <img src={`http://localhost:8080/files/${as.url}`} style={{width:"300px"}}/>
-                                            </td>
-                                            
-                                            <td>
-                                                <button onClick={()=>assignSwimsuitProfilePic(as.id)}>Assign Swimsuit Profile Pic</button>
-                                                <button onClick={()=>addSwimsuit(as.id)}>Add Swimsuit</button>
-                                            </td>                                        
-                                        </tr>    
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    
-                    </div>
-                    
-
-
-                    <div className="profile_grid1">
-                    <h2>All People</h2>
-                   
-                            <div className="rowTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-
-                                        <th>Action</th>
+                                        <Link to={`/addresses/${as.id}`}>
+                                            <img style={{height:"110px", padding: "5px"}} src={`http://localhost:8080/files/${as.url}`}/>
+                                        </Link>
                                         
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allPeople.map((ap, i)=>(
-                                        <tr key={i}>
-                                            <td>{ap.id}</td>
-                                            <td>
-                                                {ap.name}
-                                            </td>
-                                            
-                                            <td>
-                                                <button onClick={()=>addPerson(ap.id)}>Add Person</button>
-                                            </td>                                        
-                                        </tr>    
-                                        ))
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    
+                                        <div style={{display:"flex", flexDirection:"column"}}>
+                                    
+                                            <button onClick={()=>assignSwimsuitProfilePic(as.id)}>Assign Profile Pic</button>
+                                            <button onClick={()=>addSwimsuit(as.id)}>Add Swimsuit</button>
+                                        </div>                                        
+                                    </div>
+                                    ))
+                            }
+                            </div>
+                        </div>  
                     </div>
-                    
+
                     </>:
                     <></>
                 }
@@ -349,8 +338,6 @@ function SwimsuitDetailDetail(){
                 </> 
                 :<h2>No Records</h2>
                 }
-
-
 
 
             </div> 

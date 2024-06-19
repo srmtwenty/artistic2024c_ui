@@ -126,6 +126,7 @@ function BroadcastDetail(){
                 <div className="profile_grid1">
                     <h2><strong>{name}</strong> Profile</h2>
                     <div className="labels">
+                        
                         <div className="row2">
                             <span className="label">Id: </span>
                             <span className="value">{id}</span>
@@ -136,7 +137,7 @@ function BroadcastDetail(){
                         </div>
                         <div className="row2">
                             <span className="label">Url: </span>
-                            <span className="value">{url}</span>
+                            <span className="value"><Link to={url}>Link</Link></span>
                         </div>
                         <div className="row2">
                             <span className="label">Date: </span>
@@ -151,7 +152,7 @@ function BroadcastDetail(){
                                 people.map((p, i)=>(
                                     <li key={i}><Link to={`/people/${p.id}`}>{p.name}</Link>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
                                             :<></>
                                         }
@@ -163,9 +164,6 @@ function BroadcastDetail(){
                             }
                             </ul>
                         </div>
-                        <div className="row2">
-                            <p>{description}</p> 
-                        </div> 
                         
                         <div className="row2">    
                             <span className="label2">Tags:</span>
@@ -173,7 +171,7 @@ function BroadcastDetail(){
                                 <ul>
                                     <li style={{verticalAlign:"top"}}>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <form onSubmit={addTag2}>
                                                 <div>
                                                     <input type="text"  placeholder="Enter Tag Name" style={{width: "10em"}} onChange={(e)=>setTName(e.target.value)}/>
@@ -207,12 +205,12 @@ function BroadcastDetail(){
                     <div className="buttonsWrapDetail">
                         
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                             <div className="postDetail">
                                 <Link className="link" to="/broadcasts/create">Post Person</Link>
                             </div>
-                            <div>
+                            <div style={{display:"flex"}}>
                                 <div className="backToDetail">
                                     <Link className="link" to="/broadcasts">Back to List</Link>  
                                 </div>

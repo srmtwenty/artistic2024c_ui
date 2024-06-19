@@ -129,7 +129,7 @@ function TagList(){
                             <h2>Tag List is Empty</h2>  
                     }
                     {
-                        user.roles.includes("ROLE_ADMIN")?
+                        user && user.roles.includes("ROLE_ADMIN")?
                         <div className="createLink">
                             <Link className="link" to="/tags/create">Create Tag</Link>
                         </div>:

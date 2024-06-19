@@ -71,10 +71,8 @@ function NationalTeamList(){
             {
                 nationalTeams.length!=0?
                 <>
-                <h2>National Team List</h2>
-      
+                <h2 style={{padding:"10px 0 10px 0"}}>National Team List</h2>
                  <div className="rowTable">
-               
                     <table>
                         <thead>
                             <tr>
@@ -91,7 +89,7 @@ function NationalTeamList(){
                                     <td>{national.name}</td>
                                     <td>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <div className="tdButtonWrapper">
                                                 <div className="tdButtonContainer1">
                                                     <Link className="link" to={`/nationalTeams/${national.id}/update`}>Edit</Link>    
@@ -127,7 +125,7 @@ function NationalTeamList(){
                     <h2>National Team List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/nationalTeams/create">Create National Team</Link>
                 </div>:

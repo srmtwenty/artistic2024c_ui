@@ -135,7 +135,7 @@ function ArticleDetail(){
                         </div>
                         <div className="row2">
                             <span className="label">Address: </span>
-                            <span className="value">{address}</span>
+                            <span className="value"><Link to={address}>{address}</Link></span>
                         </div>
                         <div className="row2">
                             <span className="label">Date: </span>
@@ -150,7 +150,7 @@ function ArticleDetail(){
                                 people.map((p, i)=>(
                                     <li key={i}><Link to={`/people/${p.id}`}>{p.name}</Link>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
                                             :<></>
                                         }
@@ -162,9 +162,6 @@ function ArticleDetail(){
                             }
                             </ul>
                         </div>
-                        <div className="row2">
-                            <p>{description}</p> 
-                        </div> 
                         
                         <div className="row2">    
                             <span className="label2">Tags:</span>
@@ -172,7 +169,7 @@ function ArticleDetail(){
                                 <ul>
                                     <li style={{verticalAlign:"top"}}>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <form onSubmit={addTag2}>
                                                 <div>
                                                     <input type="text"  placeholder="Enter Tag Name" style={{width: "10em"}} onChange={(e)=>setTName(e.target.value)}/>
@@ -205,12 +202,12 @@ function ArticleDetail(){
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                                 <div className="postDetail">
                                     <Link className="link" to="/articles/create">Post Person</Link>
                                 </div>
-                                <div>
+                                <div style={{display:"flex"}}>
                                     <div className="backToDetail">
                                         <Link className="link" to="/articles">Back to List</Link>  
                                     </div>
@@ -231,7 +228,7 @@ function ArticleDetail(){
                     </div>
                 </div>
                 {
-                    user.roles.includes("ROLE_ADMIN")?
+                    user && user.roles.includes("ROLE_ADMIN")?
                     <>
                     <div className="profile_grid1">
                         <h2>All People</h2>

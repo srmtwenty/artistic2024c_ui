@@ -7,6 +7,7 @@ import authHeader from '../../services/auth-header';
 function PersonPost(){
     const [name, setName]=useState("")
     const [description, setDescription]=useState("")
+    const [profilePicAlt, setProfilePicAlt]=useState("")
     const [gender, setGender]=useState(0)
     const [nationalityId, setNationalityId]=useState(1)
     const [allNations, setAllNations]=useState([])
@@ -16,6 +17,7 @@ function PersonPost(){
         axios.post("http://localhost:8080/people/create", {
             name:name,
             description:description,
+            profilePicAlt:profilePicAlt,
             gender:gender,
             //nationality:{
             //    id:nationalityId
@@ -53,6 +55,10 @@ function PersonPost(){
                             <div className="rowTextArea">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="3" cols="34" onChange={(e)=>setDescription(e.target.value)}/>
+                            </div>
+                            <div className="row2">
+                                <label className="labelPost">Profile Pic Alt:</label>
+                                <input type="text" onChange={(e)=>setProfilePicAlt(e.target.value)}/>
                             </div>
                             <div className="row2">
                                 <label className="labelPost">Gender:</label>

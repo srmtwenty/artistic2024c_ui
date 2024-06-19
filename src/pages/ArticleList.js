@@ -73,16 +73,16 @@ function ArticleList(){
             {
                 articles.length!=0?
                 <>
-                <h2 style={title}>Article List</h2>
+                <h2 style={title}>Article List(<Link to="https://docs.google.com/spreadsheets/d/1VLB9b1Q5o_Eugrx92dEFWZE97lJkuRjteY5PrYQ1_VI/edit?usp=sharing">Articles</Link>)</h2>
                     <div className="rowTable">
                         <table>
                             <thead>
                                 <tr>
                                     <th><button onClick={()=>handleFieldName("id")}>Id</button></th>
                                     <th><button onClick={()=>handleFieldName("name")}>Name</button></th>
-                                    <th>Address</th>
+                               
                                     <th>Date</th>
-                                
+                                    <th>People</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -92,12 +92,20 @@ function ArticleList(){
                                     <tr key={i}>
                                         <td><Link to={`/articles/${article.id}`}>{article.id}</Link></td>
                                         <td>{article.name}</td>
-                                        <td>{article.address}</td>
+                                       
                                         <td>{article.date}</td>
-                                        
+                                        <td>
+                                            <ul>
+                                            {
+                                                article.people.map((ar, i)=>(
+                                                    <li key={i}><Link to={`/people/${ar.id}`}>{ar.name}</Link></li>
+                                                ))
+                                            }
+                                            </ul>
+                                        </td>
                                         <td>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
                                                     <div className="tdButtonContainer1">
                                                         <Link className="link" to={`/articles/${article.id}/update`}>Edit</Link>    
@@ -132,7 +140,7 @@ function ArticleList(){
             
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/articles/create">Create Article</Link>
                 </div>:

@@ -103,7 +103,7 @@ function ChoreoList(){
                                         </td>
                                         <td>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
                                                     <div className="tdButtonContainer1">
                                                         <Link className="link" to={`/choreos/${ch.id}/update`}>Edit</Link>    
@@ -128,7 +128,7 @@ function ChoreoList(){
             
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/choreos/create">Create Choreo</Link>
                 </div>:

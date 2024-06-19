@@ -94,7 +94,7 @@ function BroadcastList(){
                                         <td>{broadcast.date}</td>     
                                         <td>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
                                                     <div className="tdButtonContainer1">
                                                         <Link className="link" to={`/broadcasts/${broadcast.id}/update`}>Edit</Link>    
@@ -128,7 +128,7 @@ function BroadcastList(){
                     <h2>Broadcast List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/broadcasts/create">Create Broadcast</Link>
                 </div>:

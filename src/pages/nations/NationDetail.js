@@ -52,13 +52,13 @@ function NationDetail(){
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                             <div className="postDetail">
                                 <Link className="link" to="/nations/create">Post</Link>
                             </div>
 
-                            <div>
+                            <div style={{display:"flex"}}>
                                 <div className="backToDetail">
                                     <Link className="link" to="/nations">Back to List</Link>  
                                 </div>

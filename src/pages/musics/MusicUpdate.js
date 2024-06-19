@@ -6,6 +6,7 @@ import authHeader from '../../services/auth-header';
 function MusicUpdate(){
     const [name, setName]=useState("");
     const [description, setDescription]=useState("");
+    const [address, setAddress]=useState("");
     const {id}=useParams();
 
     const navigate=useNavigate();
@@ -14,6 +15,7 @@ function MusicUpdate(){
             .then(res=>{
                 setName(res.data.name)
                 setDescription(res.data.description)
+                //setAddress(res.data.address)
                 //setComposers(res.data.composers)
                 //setArtists(res.data.artists)
                 //setSoundtrack(res.data.soundtrack)
@@ -30,7 +32,8 @@ function MusicUpdate(){
         e.preventDefault();
         axios.put(`http://localhost:8080/musics/${id}/update`,{
             name:name,
-            description:description
+            description:description,
+           
         }, {headers:authHeader()})
             .then(res=>{
                 navigate(`/musics/${id}`)
@@ -52,6 +55,7 @@ function MusicUpdate(){
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="4" cols="50" onChange={(e)=>setDescription(e.target.value)} value={description}/>
                             </div>
+                            
                             <div className="updateButtonsWrap">
                                 <div className="updateButtonSubmit">
                                     <input type="submit" value="Update Music"/>

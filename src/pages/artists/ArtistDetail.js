@@ -9,7 +9,7 @@ function ArtistDetail(props){
     const [name, setName]=useState("")
     const [description, setDescription]=useState("")
     const [musics, setMusics]=useState([])
-
+    const [musicsComposer, setMusicsComposer]=useState([])
     const {id}=useParams();
     const navigate=useNavigate();
     const user=AuthService.getCurrentUser();
@@ -19,6 +19,7 @@ function ArtistDetail(props){
                 setName(res.data.name)
                 setDescription(res.data.description)
                 
+                console.log(res.data)
             })
             .catch(err=>console.log(err))
     }
@@ -26,12 +27,22 @@ function ArtistDetail(props){
         axios.get(`http://localhost:8080/artists/${id}/musics`, {headers:authHeader()})
             .then(res=>{
                 setMusics(res.data)
+                console.log(res.data);
+            })
+            .catch(err=>console.log(err))
+    }
+    const loadMusicsComposer=()=>{
+        axios.get(`http://localhost:8080/artists/${id}/musicsComposer`, {headers:authHeader()})
+            .then(res=>{
+                setMusicsComposer(res.data)
+                console.log(res.data);
             })
             .catch(err=>console.log(err))
     }
     useEffect(()=>{
         loadArtist()
         loadMusics()
+        loadMusicsComposer()
     }, [])
 
     return(
@@ -61,17 +72,27 @@ function ArtistDetail(props){
                             </ul>
                         </div>
                         <div className="row2">
+                            <span className="label2">Musics For Composer(ref):</span>
+                            <ul className="ultest2">
+                            {
+                                musicsComposer.map((mc, i)=>(
+                                    <li key={i}><Link to={`/musics/${mc.id}`}>{mc.name}</Link></li>
+                                ))
+                            }
+                            </ul>
+                        </div>
+                        <div className="row2">
                             <p>{description}</p> 
                         </div> 
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                                 <div className="postDetail">
                                     <Link className="link" to="/artists/create">Post</Link>
                                 </div>
-                                <div>
+                                <div style={{display:"flex"}}>
                                     <div className="backToDetail">
                                         <Link className="link" to={`/artists/${id}/update`}>Update</Link>  
                                     </div>
@@ -80,8 +101,7 @@ function ArtistDetail(props){
                                     </div>
                                 </div>
                             </>
-                            :
-                            <>
+                            :<>
                                  <div>
                                     <div className="backToDetail">
                                         <Link className="link" to="/artists">Back to List</Link>  

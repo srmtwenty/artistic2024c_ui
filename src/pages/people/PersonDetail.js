@@ -1,5 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import axios from 'axios';
+import {Modal} from '@mui/material';
 import {Link, useNavigate, useParams} from 'react-router-dom';
 import '../style1.css';
 import authHeader from '../../services/auth-header';
@@ -9,7 +10,8 @@ function PersonDetail(){
     const [name, setName]=useState("")
     const [description, setDescription]=useState("")
     const [gender, setGender]=useState(0)
-    const [nationality, setNationality]=useState(1)
+    const [nationality, setNationality]=useState(null)
+    const [nationalityId, setNationalityId]=useState(-1)
     const [allNationalities, setAllNationalities]=useState([])
     const [occupations, setOccupations]=useState([])
     const [allOccupations, setAllOccupations]=useState([])
@@ -29,10 +31,31 @@ function PersonDetail(){
     const [profilePic, setProfilePic]=useState(0)
     const [swimsuitDetails, setSwimsuitDetails]=useState([])
     const [choreos, setChoreos]=useState([])
+    const [occupationId, setOccupationId]=useState(-1)
+    const [profilePicAlt, setProfilePicAlt]=useState(null)
 
+   
     const user=AuthService.getCurrentUser();
     const {id}=useParams();
+    const [idPrev, setIdPrev]=useState(parseInt(id)-1);
+    const [idNext, setIdNext]=useState(parseInt(id)+1);
+
+    
     const navigate=useNavigate();
+
+    const [open, setOpen]=useState(false);
+    const handleClose = () => {
+        setOpen(false);
+    };
+ 
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
+    const imgClick=()=>{
+        console.log("Clicked!");
+    }
+
     const loadPerson=()=>{
         axios.get(`http://localhost:8080/people/${id}`, {headers:authHeader()})
             .then(res=>{
@@ -41,7 +64,9 @@ function PersonDetail(){
                 setDescription(res.data.description)
                 setGender(res.data.gender)
                 setNationality(res.data.nationality)
+                setNationalityId(res.data.nationality.id)
                 setProfilePic(res.data.profilePic)
+                setProfilePicAlt(res.data.profilePicAlt)
             })
             .catch(err=>console.log(err))
     }
@@ -107,7 +132,7 @@ function PersonDetail(){
             .catch(err=>console.log(err))
     }
     const loadAddressesForPerson=()=>{
-        axios.get(`http://localhost:8080/people/${id}/addresses`, {headers:authHeader()})
+        axios.get(`http://localhost:8080/people/${id}/addressesAlt`, {headers:authHeader()})
             .then(res=>{
                 setAddresses(res.data)
             })
@@ -155,13 +180,13 @@ function PersonDetail(){
         loadBroadcastsForPerson()
         loadRoutinesForPerson()
         loadAddressesForPerson()
-        loadAllAddresses()
-        loadAllImages()
+        
         loadSwimsuitDetails()
         loadChoreos()
-    }, [])
+    }, [idPrev, idNext])
 
-    const addOccupation=(occupationId)=>{
+    const addOccupation=(e)=>{
+        e.preventDefault()
         axios.put(`http://localhost:8080/people/${id}/addOccupation/${occupationId}`,{}, {headers:authHeader()})
             .then(res=>{
                 console.log("Occupation has been added!")
@@ -232,16 +257,17 @@ function PersonDetail(){
             })
             .catch(err=>console.log(err))
     }
-    const assignNationality=(nationId)=>{
-        axios.put(`http://localhost:8080/people/${id}/assignNation/${nationId}`, {},{headers:authHeader()})
+    const assignNationality=(e)=>{
+        e.preventDefault()
+        axios.put(`http://localhost:8080/people/${id}/assignNation/${nationalityId}`, {},{headers:authHeader()})
             .then(res=>{
                 window.location.reload();
                 navigate(`/people/${id}`);
             })
             .catch(err=>console.log(err))
     }
-    const removeNationality=(nationId)=>{
-        axios.put(`http://localhost:8080/people/${id}/removeNation/${nationId}`,{}, {headers:authHeader()})
+    const removeNationality=(nationalityId)=>{
+        axios.put(`http://localhost:8080/people/${id}/removeNation/${nationalityId}`,{}, {headers:authHeader()})
             .then(res=>{
                 window.location.reload();
                 navigate(`/people/${id}`);
@@ -259,7 +285,7 @@ function PersonDetail(){
             .catch(err=>console.log(err))
     }
     const removeAddress=(addressId)=>{
-        axios.put(`http://localhost:8080/people/${id}/removeAddress/${addressId}`)
+        axios.put(`http://localhost:8080/people/${id}/removeAddress/${addressId}`,{}, {headers:authHeader()})
             .then(res=>{
                 console.log("Address has been removed!")
                 window.location.reload();
@@ -281,13 +307,16 @@ function PersonDetail(){
             .catch(err=>console.log(err))
     }
 
-    const assignProfilePic=(profilePicId)=>{
-        axios.put(`http://localhost:8080/people/${id}/assignProfilePic/${profilePicId}`, {},{headers:authHeader()})
-            .then(res=>{
-                window.location.reload();
-                navigate(`/people/${id}`);
-            })
-            .catch(err=>console.log(err))
+    const assignProfilePic=(url)=>{
+        axios.put(`http://localhost:8080/people/${id}/updateProfilePic`, 
+            {
+                profilePicAlt:url
+            },{headers:authHeader()})
+                .then(res=>{
+                    window.location.reload();
+                    navigate(`/people/${id}`);
+                })
+                .catch(err=>console.log(err))
     }
     const removeProfilePic=(profilePicId)=>{
         axios.put(`http://localhost:8080/people/${id}/removeProfilePic/${profilePicId}`,{}, {headers:authHeader()})
@@ -298,36 +327,47 @@ function PersonDetail(){
             .catch(err=>console.log(err))
     }
 
+    const prevPage=(e)=>{
+        e.preventDefault();
+        //setIdPrev(parseInt(idPrev)-1)
+        //window.location.reload();
+        navigate(`/people/${idPrev}`)
+        window.location.reload();
+    }
+    const nextPage=(e)=>{
+        e.preventDefault();
+        //setIdNext(parseInt(idNext)+1)
+        navigate(`/people/${idNext}`)
+        window.location.reload();
+        //window.location.reload();
+    }
+
     return(
         <>
+
             <div className="profile_wrap2">
             {name!=""?
                 <>
                 <div className="profile_grid1">
                     
-
                     <div className="labels">
                         <h2><strong>{name}</strong> Profile (Id: {id})</h2>
-                        <div style={{display:"flex", width:"90%", margin:"auto"}}>
+                        <div className="create-your-own-wrapper">
                             
                             <div style={{flex:"1"}}>
-                                <div className="row2FlexChild">
+                                <div className="row2FlexChildPortrait">
                                     <span className="value">
+                                        <div style={{border:"1px solid", height:"250px", width:"200px", backgroundColor:"white", display:"flex", alignItems:"center", justifyContent:"center"}}>
                                         {
-                                            profilePic!=null?
-                                            <><img src={`http://localhost:8080/files/${profilePic.url}`} style={{border:"1px black solid", width:"300px"}}/>
-                                                {
-                                                    user.roles.includes("ROLE_ADMIN")?
-                                                    <button className="marginLeft" onClick={()=>removeProfilePic(profilePic.id)}>x</button>
-                                                    :<></>
-                                                }
-                                            </>:
-                                            <div style={{border:"1px black solid", padding:"2px"}}>No profile picture</div>
-                                        }
+                                            profilePicAlt!=null?
+                                            <>
+                                                <img src={`http://localhost:8080/files/${profilePicAlt}`} style={{border:"1px black solid", height:"250px"}}/>
+                                            </>
+                                            :<p style={{margin:"0"}}>No profile picture</p>                                    
+                                        }</div>  
                                     </span>
                                 </div>
                             </div>
-
 
                             <div style={{flex:"1", backgroundColor:"white"}}>
                             
@@ -336,47 +376,87 @@ function PersonDetail(){
                                     <span className="value">{gender}</span>
                                 </div>
                                 <div className="row2FlexChild">
-                                    <span className="label">Nationality: </span>
-                                    <span className="value">
+                                    <span className="label">Nation: </span>
+                                    <div style={{width:"250px"}}>
                                         {
                                             nationality?
                                             <><Link to={`/nations/${nationality.id}`}>{nationality.name}</Link>
                                                 {
-                                                    user.roles.includes("ROLE_ADMIN")?
+                                                    user && user.roles.includes("ROLE_ADMIN")?
                                                     <button className="marginLeft" onClick={()=>removeNationality(nationality.id)}>x</button>
                                                     :<></>
                                                 }
                                             </>:
                                             <>Null</>
                                         }
-                                    </span>
+                                        {
+                                            user && user.roles.includes("ROLE_ADMIN") && allNationalities.length!=0?
+                                            <form onSubmit={assignNationality}>
+                                                <select id="nationalityId" name="nationalityId" onChange={(e)=>setNationalityId(e.target.value)}>
+                                                    <option>Select Nation</option>
+                                                    {
+                                                    allNationalities.map((na, i)=>(
+                                                        <option key={i} value={na.id}>{na.name}</option>
+                                                    ))
+                                                    }
+                                                </select>
+                                                
+                                                <input type="submit" value="Assign"/>
+                                            </form>
+                                            :<></>
+                                        }
+                                    </div>
+                                    <>
+                                    
+                                    </>
                                 </div>
                                 <div className="row2FlexChild">
-                                    <span className="label2">Occupations:</span>
-                                    <ul className="ultest2">
-                                    {   
-                                        occupations.length!=0?
-                                        occupations.map((oc, i)=>(
-                                            <li key={i}><Link to={`/occupations/${oc.id}`}>{oc.name}</Link>
+                                    <span className="label">Roles:</span>
+                                    <div style={{width:"250px"}}>
+                                        <ul className="ultest2">
+                                        {   
+                                            occupations.length!=0?
+                                            occupations.map((oc, i)=>(
+                                                <li key={i}>
+                                                    <div>    
+                                                        <Link to={`/occupations/${oc.id}`} className="list-block">{oc.name}</Link>
+                                                        {
+                                                            user && user.roles.includes("ROLE_ADMIN")?
+                                                            <button className="marginLeft" onClick={()=>removeOccupation(oc.id)}>x</button>
+                                                            :<></>
+                                                        }
+                                                    </div>
+                                                </li>
+                                            )):
+                                            <>Null</>
+                                        }
+                                        {
+                                            user && user.roles.includes("ROLE_ADMIN") && allOccupations.length!=0?
+                                            <form onSubmit={addOccupation}>
+                                                <select id="occupationId" name="occupationId" onChange={(e)=>setOccupationId(e.target.value)}>
+                                                    <option>Select Occupation</option>
                                                 {
-                                                    user.roles.includes("ROLE_ADMIN")?
-                                                    <button className="marginLeft" onClick={()=>removeOccupation(oc.id)}>x</button>
-                                                    :<></>
+                                                allOccupations.map((occu, i)=>(
+                                                    
+                                                    <option key={i} value={occu.id}>{occu.name}</option>
+                                                ))
                                                 }
+                                                </select>
                                                 
-                                            </li>
-                                        )):
-                                        <>Null</>
-                                    }
-                                    </ul>
+                                                <input type="submit" value="Add"/>
+                                            </form>
+                                            :<></>
+                                        }
+                                        </ul>
+                                    </div>
                                 </div>
+
                                 <div className="row2FlexChild">    
-                                    <span className="label2">Tags:</span>
+                                    <span className="label">Tags:</span>
                                     <div className="ultest2">
-                                        <ul>
-                                            <li style={{verticalAlign:"top"}}>
+                                        
                                                 {
-                                                    user.roles.includes("ROLE_ADMIN")?
+                                                    user && user.roles.includes("ROLE_ADMIN")?
                                                     <form onSubmit={addTag2}>
                                                         <div>
                                                             <input type="text"  placeholder="Enter Tag Name" style={{width: "10em"}} onChange={(e)=>setTName(e.target.value)}/>
@@ -385,10 +465,7 @@ function PersonDetail(){
                                                     </form>
                                                     :<></>
                                                 }
-                                                
-                                            </li>
-                                        </ul>
-                                        
+                                         
                                         <div className="tag_block"> 
                                             {   
                                             tags?
@@ -396,7 +473,7 @@ function PersonDetail(){
                                                 <div key={i} className="tag_field">
                                                     <a href={`/tags/${t.id}`} className="tag">{t.name}</a>
                                                     {
-                                                        user.roles.includes("ROLE_ADMIN")?
+                                                        user && user.roles.includes("ROLE_ADMIN")?
                                                         <button onClick={()=>removeTag(t.id)} className="buttonTag">x</button>
                                                         :<></>
                                                     }
@@ -415,14 +492,14 @@ function PersonDetail(){
 
 
                         <div className="row2">
-                                    <span className="label2">SNS:</span>
+                                    <span className="label">SNS:</span>
                                     <ul className="ultest2">
                                     {   
                                         snss.length!=0?
                                         snss.map((s, i)=>(
                                             <li key={i}><a href={s.name}>{s.name}</a>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <button className="marginLeft" onClick={()=>removeSNS(s.id)}>x</button>
                                                 :<></>
                                             }
@@ -432,7 +509,7 @@ function PersonDetail(){
                                         <>Null</>
                                     }
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <form onSubmit={addSNS}>
                                             <div>
                                                 <input type="text" placeholder="Enter SNS address" style={{width: "10em"}} onChange={(e)=>setSName(e.target.value)}/>
@@ -447,7 +524,7 @@ function PersonDetail(){
 
 
                         <div className="row2">
-                            <span className="label2">Broadcasts:</span>
+                            <span className="label">TV programs:</span>
                             <ul className="ultest2">
                             {   
                                 broadcasts.length!=0?
@@ -465,7 +542,7 @@ function PersonDetail(){
                             <p>{description}</p> 
                         </div>  
                         <div className="row2">
-                            <span className="label2">Records:</span>  
+                            <span className="label">Records:</span>  
                         </div>
                         <div className="rowTable">
                             {
@@ -500,34 +577,40 @@ function PersonDetail(){
 
 
                             <div className="row2">
-                                <span className="label2">Images:</span>  
+                                <span className="label" style={{padding:"20px 0px 0px 0px"}}>Choreographic:</span>  
                             </div>
                             <div className="rowTable">
                                 
                                 {
-                                addresses.length!=0?
+                                choreos.length!=0?
                                     <div style={{display:"flex", flexWrap:"wrap"}}>
                                         {
-                                            addresses.map((a, i)=>(
-                                                
-                                                <div key={i} style={{display:"block"}}>
-                                                    <Link to={`/addresses/${a.id}`}>
-                                                        <img src={`http://localhost:8080/files/${a.url}`} style={{width:"150px"}}/>
+                                            choreos.map((cho, i)=>(
+                                                <div key={i} style={{display:"block", border:"1px black solid", margin:"2px", height:"200px"}}>
+                                                    {
+                                                        cho.profileAddress!=null?
+                                                        <div>
+                                                            <Link to={`http://localhost:3000/addresses/${cho.profileAddress.url}`}>
+                                                                <img src={`http://localhost:8080/files/${cho.profileAddress.url}`} style={{height:"170px"}}/>
+                                                            </Link>
+                                                        </div>
+                                                        :<>No profile pic</>
+                                                    } 
+                                                    <Link to={`/choreos/${cho.id}`}  style={{fontSize:"10px"}}>
+                                                        {cho.name} 
                                                     </Link>
-                                                    <div style={{fontSize:"10px"}}>{a.name}</div>
+                                               
                                                 </div>
-                                                
                                             ))
                                         }  
                                     </div>:
-                                <p>Image List is Empty</p>
+                                <p>Choreographic List is Empty</p>
                                 } 
-                                
                             </div> 
 
-
+                            
                             <div className="row2">
-                                <span className="label2">SwimsuitDetails:</span>  
+                                <span className="label" style={{padding:"20px 0px 0px 0px"}}>SwimsuitDetails:</span>  
                             </div>
                             <div className="rowTable">
                                 
@@ -537,16 +620,44 @@ function PersonDetail(){
                                         {
                                             swimsuitDetails.map((sd, i)=>(
                                                 
-                                                <div key={i} style={{display:"block"}}>
+                                                <div key={i} style={{display:"block", border:"1px black solid", margin:"2px"}}>
                                                     <Link to={`/swimsuitDetails/${sd.id}`}>
                                                         {   
                                                             sd.swimsuitProfilePic!==null?
-                                                            <img src={`http://localhost:8080/files/${sd.swimsuitProfilePic.url}`} style={{width:"150px"}}/>
+                                                            <img src={`http://localhost:8080/files/${sd.swimsuitProfilePic.url}`} style={{height:"150px"}}/>
                                                             :<>No profile Pic</>
                                                         }
                                                         
                                                     </Link>
                                                     <div style={{fontSize:"10px"}}>{sd.name}</div>
+                                                </div>
+                                                
+                                            ))
+                                        }  
+                                    </div>:
+                                <p>Swimsuit Details List is Empty</p>
+                                } 
+                            </div> 
+
+
+                            <div className="row2">
+                                <span className="label" style={{padding:"20px 0px 0px 0px"}}>Photos:</span>  
+                            </div>
+                            <div className="rowTable">
+                                
+                                {
+                                addresses.length!=0?
+                                    <div style={{display:"flex", flexWrap:"wrap"}}>
+                                        {
+                                            addresses.map((a, i)=>(
+                                                
+                                                <div key={i} className="photoFrame1">
+                                                    <Link to={`http://localhost:3000/addresses/${a.id}`}>
+                                                        <img src={`http://localhost:8080/files/${a.url}`} style={{height:"110px"}}/>
+                                                    </Link>
+                                                    <div style={{fontSize:"10px"}}>{a.name}</div>
+                                                    <button onClick={()=>assignProfilePic(a.url)}>Profile Pic</button>
+                                                    <button onClick={()=>removeAddress(a.id)}>x</button>
                                                 </div>
                                                 
                                             ))
@@ -561,22 +672,30 @@ function PersonDetail(){
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                                 <div className="postDetail">
                                     <Link className="link" to="/people/create">Post Person</Link>
                                 </div>
-                                <div>
+                                <div className="pagination_center">
+                                    <button onClick={prevPage}>Prev ({idPrev})</button>
+                                    <button onClick={nextPage}>Next ({idNext})</button>
+                                </div>
+                                <div style={{display:"flex"}}>
                                     <div className="backToDetail">
                                         <Link className="link" to="/people">Back to List</Link>  
                                     </div>
                                     <div className="backToDetail">
-                                        <Link className="link" to={`/people/${id}/update`}>Update</Link>
+                                        <Link className="link" to={`/people/${id}/update`}>Edit</Link>
                                     </div>
                                     
                                 </div>
                             </>:
                             <>
+                                <div className="pagination_center">
+                                    <button onClick={prevPage}>Prev ({idPrev})</button>
+                                    <button onClick={nextPage}>Next ({idNext})</button>
+                                </div>
                                 <div className="backToDetail">
                                     <Link className="link" to="/people">Back to List</Link>  
                                 </div>
@@ -588,42 +707,10 @@ function PersonDetail(){
 
                 
                 {
-                    user.roles.includes("ROLE_ADMIN")?
+                    user && user.roles.includes("ROLE_ADMIN")?
                     <>
+                    
                     <div className="profile_grid1">
-                        <h2>All Occupations</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            {
-                                allOccupations.length!=0?
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allOccupations.map((oc, i)=>(
-                                        <tr key={i}>
-                                            <td>{oc.id}</td>
-                                            <td>{oc.name}</td>
-                                            <td>
-                                                <button onClick={()=>addOccupation(oc.id)}>Add Role</button>
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }  
-                                </tbody>
-                            </table>:
-                                <p>Occupation List is empty</p>
-                            }
-                            </div>
-                        </div>
-                </div>
-                <div className="profile_grid1">
                     <h2>All Tags</h2>
                         <div className="labelsPost">
                             <div className="rowTable">
@@ -656,109 +743,11 @@ function PersonDetail(){
                             } 
                             </div>
                         </div>
-                </div>  
-                <div className="profile_grid1">
-                    <h2>All Nations</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            {
-                            allNationalities.length!=0?
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allNationalities.map((an, i)=>(
-                                        <tr key={i}>
-                                            <td>{an.id}</td>
-                                            <td><Link to={`/nations/${an.id}`}>{an.name}</Link></td>
-                                            <td>
-                                                <button onClick={()=>assignNationality(an.id)}>Assign Nationality</button>
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }  
-                                </tbody>
-                            </table>:
-                            <p>Nations List is Empty</p>
-                            } 
-                            </div>
-                        </div>
                     </div>  
+                
 
-                    <div className="profile_grid1">
-                    <h2>All Addresses</h2>
-                        <div className="labels">
-                            <div className="rowTable">
-                            {
-                            allAddresses.length!=0?
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Content</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allAddresses.map((aa, i)=>(
-                                        <tr key={i}>
-                                            <td>{aa.id}</td>
-                                            <td><Link to={`/addresses/${aa.id}`}>{aa.name}</Link></td>
-                                            <td><img src={`http://localhost:8080/files/${aa.url}`} style={{width:"300px"}}/></td>
-                                            <td>
-                                                <button onClick={()=>addAddress(aa.id)}>Add Address</button>
-                                                <button onClick={()=>assignProfilePic(aa.id)}>Assign ProfileP</button>
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }  
-                                </tbody>
-                            </table>:
-                            <p>All Image List is Empty</p>
-                            } 
-                            </div>
-                        </div>
-                    </div>  
-
-                    <div className="profile_grid1">
-                    <h2>All Images</h2>
-                        <div className="labels">
-                            <div className="rowTable">
-                            {
-                            allImages.length!=0?
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                           
-                                        <th>Content</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allImages.map((ai, i)=>(
-                                        <tr key={i}>
-                                            <td><Link to={`/images/${ai.id}`}>{ai.id}</Link></td>
-                                            
-                                            <td><img src={ai.url} style={{width:"300px"}}/></td>
-                                        </tr>
-                                        ))
-                                    }  
-                                </tbody>
-                            </table>:
-                            <p>All Image List is Empty</p>
-                            } 
-                            </div>
-                        </div>
-                    </div>  
+                    
+                
 
                     </>
                     :<></>

@@ -7,6 +7,7 @@ import AuthService from '../../services/auth.service';
 function MusicDetail(){
     const [name, setName]=useState("");
     const [description, setDescription]=useState("");
+    const [address, setAddress]=useState("");
     const [composers, setComposers]=useState([]);
     const [artists, setArtists]=useState([]);
     const [soundtrack, setSoundtrack]=useState(1)
@@ -15,6 +16,7 @@ function MusicDetail(){
     const [allArtists, setAllArtists]=useState([])
     const [allComposers, setAllComposers]=useState([])
     const [allSoundtracks, setAllSoundtracks]=useState([])
+    const [routines, setRoutines]=useState([])
 
     const user=AuthService.getCurrentUser();
     const navigate=useNavigate();
@@ -27,6 +29,7 @@ function MusicDetail(){
                 setComposers(res.data.composers)
                 setArtists(res.data.artists)
                 setSoundtrack(res.data.soundtrack)
+                setAddress(res.data.address)
             })
             .catch(err=>console.log(err))
     }
@@ -55,11 +58,19 @@ function MusicDetail(){
             })
             .catch(err=>console.log(err))
     }
+    const loadRoutines=()=>{
+        axios.get(`http://localhost:8080/musics/${id}/routines`,  {headers:authHeader()})
+            .then(res=>{
+                setRoutines(res.data)
+            })
+            .catch(err=>console.log(err))
+    }
     useEffect(()=>{
         loadMusic()
         loadAllArtists()
         loadAllSoundtracks()
         loadSNSForMusic()
+        loadRoutines()
     },[])
 
     const addArtist=(artistId)=>{
@@ -148,19 +159,21 @@ function MusicDetail(){
                             <span className="label">Name: </span>
                             <span className="value">{name}</span>
                         </div>
+                        
+                        
                         <div className="row2">
-                            <span className="label">Soundtrack </span>
+                            <span className="label">Soundtrack: </span>
                             <span className="value">
                             {
                                 soundtrack?
-                                <><Link to={`/soundtracks/${soundtrack.id}`}>{soundtrack.name}
+                                <Link to={`/soundtracks/${soundtrack.id}`}>{soundtrack.name}
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <button className="marginLeft" onClick={()=>removeSoundtrack(soundtrack.id)}>x</button>:
                                         <></>
                                     }
                                     
-                                </Link></>:
+                                </Link>:
                                 <>Null</>
                             }    
                             </span>
@@ -172,7 +185,7 @@ function MusicDetail(){
                                 composers.map((composer, i)=>(
                                     <li key={i}><Link to={`/artists/${composer.id}`}>{composer.name}</Link>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <button className="marginLeft" onClick={()=>removeComposer(composer.id)}>x</button>:
                                         <></>
                                     }
@@ -188,7 +201,7 @@ function MusicDetail(){
                                 artists.map((artist, i)=>(
                                     <li key={i}><Link to={`/artists/${artist.id}`}>{artist.name}</Link>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <button className="marginLeft" onClick={()=>removeArtist(artist.id)}>x</button>
                                         :<></>
                                     }
@@ -197,6 +210,24 @@ function MusicDetail(){
                             }
                             </ul>
                         </div>
+
+
+
+                        <div className="row2">
+                            <span className="label2">Routines:</span>
+                            <ul className="ultest2">
+                            {
+                                routines.map((routine, i)=>(
+                                    <li key={i}>
+                                        <Link to={`/routines/${routine.id}`}>{routine.name}</Link>
+                                    
+                                    </li>
+                                ))
+                            }
+                            </ul>
+                        </div>
+
+
                         <div className="row2">
                             <span className="label2">Links:</span>
                             <ul className="ultest2">
@@ -205,7 +236,7 @@ function MusicDetail(){
                                 musicLinks.map((ml, i)=>(
                                     <li key={i}><a href={ml.name}>{ml.name}</a>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <button className="marginLeft" onClick={()=>removeSNS(ml.id)}>x</button>
                                         :<></>
                                     }
@@ -214,7 +245,7 @@ function MusicDetail(){
                                 <>Null</>
                             }
                             {
-                                user.roles.includes("ROLE_ADMIN")?
+                                user && user.roles.includes("ROLE_ADMIN")?
                                 <form onSubmit={addSNS}>
                                     <div>
                                         <input type="text" placeholder="Enter Music Link" style={{width: "10em"}} onChange={(e)=>setMName(e.target.value)}/>
@@ -233,12 +264,12 @@ function MusicDetail(){
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                             <div className="postDetail">
                                 <Link className="link" to="/musics/create">Post</Link>  
                             </div>
-                            <div>
+                            <div style={{display:"flex"}}>
                                 <div className="backToDetail">
                                     <Link className="link" to="/musics">Back to List</Link>  
                                 </div>
@@ -259,7 +290,7 @@ function MusicDetail(){
                     </div>
                 </div>
                 {
-                    user.roles.includes("ROLE_ADMIN")?
+                    user && user.roles.includes("ROLE_ADMIN")?
                     <>
                     <div className="profile_grid1">
                     <h2>All Artists</h2>

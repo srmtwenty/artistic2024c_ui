@@ -98,7 +98,7 @@ function NationalTeamDetail(){
                                 nation?
                                 <><Link to={`/nations/${nation.id}`}>{nation.name}</Link>
                                 {
-                                    user.roles.includes("ROLE_ADMIN")?
+                                    user && user.roles.includes("ROLE_ADMIN")?
                                     <button className="marginLeft" onClick={()=>removeNation(nation.id)}>x</button>
                                     :<></>
                                 }
@@ -113,12 +113,12 @@ function NationalTeamDetail(){
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                             <div className="postDetail">
                                 <Link className="link" to="/nationalTeams/create">Post</Link> 
                             </div>
-                            <div>
+                            <div style={{display:"flex"}}>
                                 <div className="backToDetail">
                                     <Link className="link" to="/nationalTeams">Back to List</Link>
                                 </div>
@@ -176,12 +176,10 @@ function NationalTeamDetail(){
                                 </tbody>
                             </table>
                         </div>
-                    
                 </div>
 
-
                 {
-                    user.roles.includes("ROLE_ADMIN")?
+                    user && user.roles.includes("ROLE_ADMIN")?
                     <>
                     <div className="profile_grid1">
                     <h2>All People</h2>
@@ -194,7 +192,6 @@ function NationalTeamDetail(){
                                         <th>Name</th>
                                         <th>Roles</th>
                                         <th>Action</th>
-                                        
                                     </tr>
                                 </thead>
                                 <tbody>

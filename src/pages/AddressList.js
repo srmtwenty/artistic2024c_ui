@@ -14,6 +14,7 @@ function AddressList(){
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+
     const navigate=useNavigate();
     const user=AuthService.getCurrentUser();
     const loadAddresses=()=>{
@@ -79,9 +80,11 @@ function AddressList(){
                             <thead>
                                 <tr>
                                     <th><button onClick={()=>handleFieldName("id")}>Id</button></th>
-                                    <th><button onClick={()=>handleFieldName("name")}>Name</button></th>
                                     <th>Content</th>
-                                
+                                    <th>Source</th>
+                                    <th>Dscription</th>
+                                    
+                                    <th>People</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -90,11 +93,25 @@ function AddressList(){
                                     addresses.map((address, i)=>
                                     <tr key={i}>
                                         <td><Link to={`/addresses/${address.id}`}>{address.id}</Link></td>
-                                        <td>{address.name}</td>
-                                        <td><img src={`http://localhost:8080/files/${address.url}`} style={{height:"300px"}}/></td>
+                                        <td><img src={`http://localhost:8080/files/${address.url}`} style={{height:"150px"}}/></td>
+                                        <td>{address.source}</td>
+                                        <td>{address.description}</td>
+                                        
+                                        <td>
+                                            <ul>
+                                                {
+                                                    address.peopleAlt.map((p, i)=>
+                                                        <li key={i}>
+                                                            <Link to={`/people/${p.id}`}>{p.name}</Link>
+                                                        </li>
+                                                    )
+                                                }
+                                            </ul>
+                                        </td>
+                                        
                                         <td>
                                             {
-                                                user.roles.includes("ROLE_ADMIN")?
+                                                user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
                                                     <div className="tdButtonContainer1">
                                                         <Link className="link" to={`/addresses/${address.id}/update`}>Edit</Link>    
@@ -129,7 +146,7 @@ function AddressList(){
             
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/addresses/create">Create Address</Link>
                 </div>:

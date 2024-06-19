@@ -102,7 +102,7 @@ function AddressPost(){
                 <h2>Image List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/images/create">Upload Image</Link>
                 </div>:

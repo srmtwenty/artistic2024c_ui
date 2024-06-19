@@ -15,10 +15,12 @@ function RoutineDetail(){
     const [musics, setMusics]=useState([])
     const [swimmers, setSwimmers]=useState([])
     const [coaches, setCoaches]=useState([])
-    const [competition, setCompetition]=useState(1)
-    const [nationalTeam, setNationalTeam]=useState(1)
+    const [competition, setCompetition]=useState(0)
+    const [nationalTeam, setNationalTeam]=useState(0)
+    const [url, setUrl]=useState("")
     const [addresses, setAddresses]=useState([])
-    const [choreo, setChoreo]=useState(1)
+    const [choreo, setChoreo]=useState(0)
+    const [swimsuitDetail, setSwimsuitDetail]=useState(0);
     
 
     const [allChoreos, setAllChoreos]=useState([])
@@ -30,6 +32,16 @@ function RoutineDetail(){
     const [allNationalTeams, setAllNationalTeams]=useState([])
     const user=AuthService.getCurrentUser();
     const navigate=useNavigate();
+
+    const [postPerPage, setPostPerPage]=useState(20)
+    const [currentPage, setCurrentPage]=useState(1)
+    const [currentPageUpdated, setCurrentPageUpdated]=useState(false);
+    
+    const [startNum, setStartNum]=useState(1)
+    const [endNum, setEndNum]=useState(postPerPage);
+    const [numberOfPage, setNumberOfPage]=useState(Math.ceil(allSwimsuits.length/postPerPage))
+
+
     const {id}=useParams();
     const loadRoutine=()=>{
         axios.get(`http://localhost:8080/routines/${id}`, {headers:authHeader()})
@@ -47,7 +59,8 @@ function RoutineDetail(){
                 setCompetition(res.data.competition)
                 setNationalTeam(res.data.nationalTeam)
                 setChoreo(res.data.choreographic)
-                
+                setSwimsuitDetail(res.data.swimsuitDetail)
+                setUrl(res.data.url)
             })
             .catch(err=>console.log(err))
     }
@@ -59,7 +72,7 @@ function RoutineDetail(){
             .catch(err=>console.log(err))
     }
     const loadAllPeople=()=>{
-        axios.get("http://localhost:8080/people", {headers:authHeader()})
+        axios.get("http://localhost:8080/people/orderByNameAsc", {headers:authHeader()})
             .then(res=>
                 setAllPeople(res.data)
             )
@@ -96,12 +109,20 @@ function RoutineDetail(){
 
     
     const loadAllSwimsuits=()=>{
-        axios.get("http://localhost:8080/swimsuits", {headers:authHeader()})
+        axios.get("http://localhost:8080/swimsuitDetails", {headers:authHeader()})
             .then(res=>{
                 setAllSwimsuits(res.data)
             })
             .catch(err=>console.log(err));
     }
+    const loadAddresses=()=>{
+        axios.get(`http://localhost:8080/routines/${id}/getAddresses`, {headers:authHeader()})
+            .then(res=>{
+                setAddresses(res.data)
+            })
+            .catch(err=>console.log(err))
+    }
+    
     useEffect(()=>{
         loadRoutine();
         loadAllMusics();
@@ -111,7 +132,9 @@ function RoutineDetail(){
         loadAllChoreos();
         loadAllSwimsuits();
         loadAllAddresses();
-    }, [])
+        loadAddresses();
+   
+    }, [allSwimsuits.length, numberOfPage, startNum, endNum, currentPage])
 
     const addMusic=(musicId)=>{
         axios.put(`http://localhost:8080/routines/${id}/addMusic/${musicId}`,{}, {headers:authHeader()})
@@ -211,7 +234,33 @@ function RoutineDetail(){
             .catch(err=>console.log(err))
     }
 
+    const addSwimsuit=(swimsuitDetailId)=>{
+        axios.put(`http://localhost:8080/routines/${id}/setSwimsuitDetail/${swimsuitDetailId}`, {},{headers:authHeader()})
+            .then(res=>{
+                window.location.reload();
+                navigate(`/routines/${id}`)
+            })
+            .catch(err=>console.log(err))
+    }
+    const removeSwimsuit=(swimsuitDetailId)=>{
+        axios.put(`http://localhost:8080/routines/${id}/removeSwimsuitDetail/${swimsuitDetailId}`, {},{headers:authHeader()})
+            .then(res=>{
+                window.location.reload();
+                navigate(`/routines/${id}`)
+            })
+            .catch(err=>console.log(err))
+    }
 
+    const prevPageSwimsuit=()=>{
+            setCurrentPage(currentPage-1);
+            setStartNum(startNum-(postPerPage))
+            setEndNum(endNum-(postPerPage))
+    }
+    const nextPageSwimsuit=()=>{
+            setCurrentPage(currentPage+1);
+            setStartNum(startNum+(postPerPage))
+            setEndNum(endNum+(postPerPage))
+    }
 
     return(
         <>
@@ -219,23 +268,20 @@ function RoutineDetail(){
             {name!=""?
                 <>
                 <div className="profile_grid1">
-                    <h2><strong>{name}</strong></h2>
+                    <h2><strong>{name}(id: {id})</strong></h2>
                     <div className="labels">
+                        
                         <div className="row2">
-                            <span className="label">Id: </span>
-                            <span className="value">{id}</span>
+                            <span className="label">Url: </span>
+                            <span className="value">{url}</span>
                         </div>
                         <div className="row2">
-                            <span className="label">Name: </span>
-                            <span className="value">{name}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Competition: </span>
+                            <span className="label">Comp: </span>
                             {
                                 competition?
                                 <span className="value"><Link to={`/competitions/${competition.id}`}>{competition.name}</Link>
                                 {
-                                    user.roles.includes("ROLE_ADMIN")?
+                                    user && user.roles.includes("ROLE_ADMIN")?
                                     <button className="marginLeft" onClick={()=>removeCompetition(competition.id)}>x</button>:
                                     <></>
                                 }
@@ -244,21 +290,17 @@ function RoutineDetail(){
                             }
                         </div>
                         <div className="row2">
-                            <span className="label">Genre: </span>
-                            <span className="value">{genre}</span>
+                            <span className="label">Routine: </span>
+                            <span className="value">{genre} {type}</span>
                         </div>
                         <div className="row2">
-                            <span className="label">Type: </span>
-                            <span className="value">{type}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">NationalTeam:</span>
+                            <span className="label">N. Team:</span>
                             <span className="value">
                             {   
                                 nationalTeam?
                                 <><Link to={`/nationalTeams/${nationalTeam.id}`}>{nationalTeam.name}</Link>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <button className="marginLeft" onClick={()=>removeNationalTeam(nationalTeam.id)}>x</button>
                                         :<></>
                                     }
@@ -269,13 +311,13 @@ function RoutineDetail(){
                             }</span>
                         </div>
                         <div className="row2">
-                            <span className="label">Choreographic:</span>
+                            <span className="label">Choreo.:</span>
                             <span className="value">
                             {   
                                 choreo?
                                 <><Link to={`/choreos/${choreo.id}`}>{choreo.name}</Link>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <button className="marginLeft" onClick={()=>removeChoreo(choreo.id)}>x</button>
                                         :<></>
                                     }
@@ -295,14 +337,14 @@ function RoutineDetail(){
                         </div>
                         
                         <div className="row2">
-                            <span className="label2">Musics:</span>
+                            <span className="label2">Music List:</span>
                             <ul className="ultest2">
                             {   
                                 musics?
                                 musics.map((music, i)=>(
                                     <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <button className="marginLeft" onClick={()=>removeMusic(music.id)}>x</button>
                                             :<></>
                                         }
@@ -312,6 +354,9 @@ function RoutineDetail(){
                             }
                             </ul>
                         </div>
+
+
+                        
                         <div className="row2">
                             <span className="label2">Athletes:</span>
                             <ul className="ultest2">
@@ -320,7 +365,7 @@ function RoutineDetail(){
                                 swimmers.map((swimmer, i)=>(
                                     <li key={i}><Link to={`/people/${swimmer.id}`}>{swimmer.name}</Link>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <button className="marginLeft" onClick={()=>removeSwimmer(swimmer.id)}>x</button>
                                             :<></>
                                         }
@@ -339,7 +384,7 @@ function RoutineDetail(){
                                 coaches.map((coach, i)=>(
                                     <li key={i}><Link to={`/people/${coach.id}`}>{coach.name}</Link>
                                         {
-                                            user.roles.includes("ROLE_ADMIN")?
+                                            user && user.roles.includes("ROLE_ADMIN")?
                                             <button className="marginLeft" onClick={()=>removeCoach(coach.id)}>x</button>
                                             :<></>
                                         }
@@ -352,15 +397,61 @@ function RoutineDetail(){
                         <div className="row2">
                             <p>{description}</p> 
                         </div>  
+
+
+                        <div className="row2">
+                            <span className="label">Swimsuit:</span>
+                            <span className="value">
+                            {   
+                                swimsuitDetail?
+                                <>
+                                    <div className="rowTable">
+                                        <Link to={`/swimsuitDetails/${swimsuitDetail.id}`}>
+                                            <img src={`http://localhost:8080/files/${swimsuitDetail.swimsuitProfilePic.url}`}/>
+                                            <div>
+                                                {swimsuitDetail.name}
+                                            </div>
+                                        </Link>
+                                        {
+                                            user && user.roles.includes("ROLE_ADMIN")?
+                                            <button className="marginLeft" onClick={()=>removeSwimsuit(swimsuitDetail.id)}>x</button>
+                                            :<></>
+                                        }
+                                    </div>
+                                </>:
+                                <>Null</>
+                      
+                            }</span>
+                        </div>
+
+
+                    <div className="row2">
+                        <span className="label2">Addresses:</span>
+                    </div> 
+                    
+                    <div className="row">   
+                        <div style={{display:"flex", flexWrap:"wrap"}}>
+                        {   
+                            addresses?
+                            addresses.map((a, i)=>(
+                                <div key={i} style={{display:"block", padding:"2px", border:"1px solid"}}>
+                                    <Link to={`/addresses/${a.id}`}>
+                                        <img src={`http://localhost:8080/files/${a.url}`} style={{height:"150px"}}/>
+                                    </Link>
+                                </div>
+                            )):
+                            <>null</>
+                        }</div>
+                    </div>
                     </div>
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                             <div className="postDetail">
                                 <Link className="link" to="/routines/create">Post</Link>  
                             </div>
-                            <div>
+                            <div style={{display:"flex"}}>
                                 <div className="backToDetail">
                                     <Link className="link" to="/routines">Back to List</Link> 
                                 </div>
@@ -382,7 +473,7 @@ function RoutineDetail(){
                 
 
                 {
-                    user.roles.includes("ROLE_ADMIN")?
+                    user && user.roles.includes("ROLE_ADMIN")?
                     <>
                     <div className="profile_grid1">
                         <h2>All Musics</h2>
@@ -548,35 +639,70 @@ function RoutineDetail(){
 
 
                     <div className="profile_grid1">
-                    <h2>All Swimsuits</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allSwimsuits.map((as, i)=>(
-                                        <tr key={i}>
-                                            <td>{as.id}</td>
-                                            <td>{as.name}</td>
-                                            <td>
-                                                
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }
-                                    
-                                </tbody>
-                            </table>
-                            </div>
+                        <div className="row2">
+                            <span className="label">All Swimsuits:</span>  
                         </div>
-                    </div>
+                        <div className="rowTable">
+                        <div>Page:{currentPage} of {numberOfPage}</div>
+                        <div>Range:{startNum} - {endNum}</div>
+                        
+                        {
+                            currentPage!=1?
+                            <button onClick={()=>prevPageSwimsuit()}>prev</button>
+                            :<button disabled>prev</button>
+                        }
+                        {
+                            currentPage!=numberOfPage?
+                            <button onClick={()=>nextPageSwimsuit()}>next</button>
+                            :<button disabled>next</button>
+                        }
+
+
+                        {   
+                            allSwimsuits.length!=0?
+                            
+                            <div style={{display:"flex", flexWrap:"wrap", margin:"auto"}}>
+                                {
+                                    allSwimsuits.slice(startNum-1, endNum).map((as, i)=>(           
+                                        <div key={i} className="photoFrame1">
+                                            <Link to={`/swimsuitDetails/${as.id}`}>
+                                                {
+                                                    as.swimsuitProfilePic?
+                                                    <img src={`http://localhost:8080/files/${as.swimsuitProfilePic.url}`} style={{height:"110px", padding: "5px"}}/>
+                                                    :<>none</>
+                                                }
+                                            </Link>
+                                            <div style={{backgroundColor:"white"}}>
+                                                <div>{as.name}</div>
+                                                <button onClick={()=>addSwimsuit(as.id)}>Add Swimsuit</button>
+                                            </div>
+                                        </div>
+                                    ))
+                                }  
+                            </div>
+                            :<>Null</>
+                        }
+                    
+                        <div>Page:{currentPage} of {numberOfPage}</div>
+                        <div>Range:{startNum} - {endNum}</div>
+                        
+                        {
+                            currentPage!=1?
+                            <button onClick={()=>prevPageSwimsuit()}>prev</button>
+                            :<button disabled>prev</button>
+                        }
+                        {
+                            currentPage!=numberOfPage?
+                            <button onClick={()=>nextPageSwimsuit()}>next</button>
+                            :<button disabled>next</button>
+                        }
+                    </div>    
+                </div>       
+
+
+
+
+                    
                     </>
                     :<></>
                 }

@@ -17,6 +17,8 @@ function ComposerDetail(){
             .then(res=>{
                 setName(res.data.name)
                 setDescription(res.data.description)
+                setMusics(res.data.musics)
+                console.log(res.data);
             })
             .catch(err=>console.log(err))
     }
@@ -84,12 +86,12 @@ function ComposerDetail(){
                     
                     <div className="buttonsWrapDetail">
                         {
-                            user.roles.includes("ROLE_ADMIN")?
+                            user && user.roles.includes("ROLE_ADMIN")?
                             <>
                             <div className="postDetail">
                                 <Link className="link" to="/composers/create">Post</Link>
                             </div>
-                            <div> 
+                            <div style={{display:"flex"}}> 
                                 <div className="backToDetail">
                                     <Link className="link" to="/composers">Back to List</Link> 
                                 </div>

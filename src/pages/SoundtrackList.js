@@ -36,9 +36,7 @@ function SoundtrackList(){
             .then(res=>{
                 window.location.reload();
                 navigate("/soundtracks")
-            }
-                
-            )
+            })
             .catch(err=>console.log(err))
     }
     const loadSoundtracksPagination=()=>{
@@ -91,7 +89,7 @@ function SoundtrackList(){
                                 <td>{sound.name}</td>
                                 <td>
                                     {
-                                        user.roles.includes("ROLE_ADMIN")?
+                                        user && user.roles.includes("ROLE_ADMIN")?
                                         <div className="tdButtonWrapper">
                                             <div className="tdButtonContainer1">
                                                 <Link className="link" to={`/soundtracks/${sound.id}/update`}>Edit</Link>    
@@ -126,7 +124,7 @@ function SoundtrackList(){
                 <h2>Soundtrack List is Empty</h2>
             }
             {
-                user.roles.includes("ROLE_ADMIN")?
+                user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/soundtracks/create">Post Soundtrack</Link>
                 </div>:
