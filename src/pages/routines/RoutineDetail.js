@@ -22,7 +22,6 @@ function RoutineDetail(){
     const [choreo, setChoreo]=useState(0)
     const [swimsuitDetail, setSwimsuitDetail]=useState(0);
     
-
     const [allChoreos, setAllChoreos]=useState([])
     const [allAddresses, setAllAddresses]=useState([])
     const [allSwimsuits, setAllSwimsuits]=useState([])
@@ -30,9 +29,7 @@ function RoutineDetail(){
     const [allPeople, setAllPeople]=useState([])
     const [allCompetitions, setAllCompetitions]=useState([])
     const [allNationalTeams, setAllNationalTeams]=useState([])
-    const user=AuthService.getCurrentUser();
-    const navigate=useNavigate();
-
+    
     const [postPerPage, setPostPerPage]=useState(20)
     const [currentPage, setCurrentPage]=useState(1)
     const [currentPageUpdated, setCurrentPageUpdated]=useState(false);
@@ -41,8 +38,13 @@ function RoutineDetail(){
     const [endNum, setEndNum]=useState(postPerPage);
     const [numberOfPage, setNumberOfPage]=useState(Math.ceil(allSwimsuits.length/postPerPage))
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
 
     const {id}=useParams();
+    
+    const user=AuthService.getCurrentUser();
+    const navigate=useNavigate();
     const loadRoutine=()=>{
         axios.get(`http://localhost:8080/routines/${id}`, {headers:authHeader()})
             .then(res=>{
@@ -61,8 +63,18 @@ function RoutineDetail(){
                 setChoreo(res.data.choreographic)
                 setSwimsuitDetail(res.data.swimsuitDetail)
                 setUrl(res.data.url)
+                setLoadComplete(true)
+                console.log(loadComplete)
+                setNumberOfPage(Math.ceil(allSwimsuits.length/postPerPage))
+                console.log(`Number of Page:${numberOfPage}`)
+                console.log(`All Swimsuit Length:${allSwimsuits.length}`)
+                console.log(`Post Per Page:${postPerPage}`)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     const loadAllMusics=()=>{
         axios.get("http://localhost:8080/musics", {headers:authHeader()})
@@ -265,7 +277,12 @@ function RoutineDetail(){
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
+            {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+            {noData!=true?
                 <>
                 <div className="profile_grid1">
                     <h2><strong>{name}(id: {id})</strong></h2>
@@ -699,10 +716,6 @@ function RoutineDetail(){
                     </div>    
                 </div>       
 
-
-
-
-                    
                     </>
                     :<></>
                 }
@@ -710,6 +723,8 @@ function RoutineDetail(){
                 </> 
                 :<h2>No Records</h2>
                 }
+                </>
+            }
             </div> 
         </>
     )

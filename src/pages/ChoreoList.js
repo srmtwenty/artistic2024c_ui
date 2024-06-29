@@ -14,6 +14,9 @@ function ChoreoList(){
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const navigate=useNavigate();
     const user=AuthService.getCurrentUser();
     const loadChoreos=()=>{
@@ -21,13 +24,20 @@ function ChoreoList(){
             .then(res=>{
                 console.log(res.data)
                 setChoreos(res.data)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
 
     useEffect(()=>{
         loadChoreos();
         //loadChoreosPagination();
+        
     },[])
 
     const deleteChoreo=(id)=>{
@@ -69,8 +79,13 @@ function ChoreoList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {
-                choreos.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                {
+                noData!=true?
                 <>
                 <h2 style={title}>Choreographic List</h2>
                     <div className="rowTable">
@@ -123,9 +138,9 @@ function ChoreoList(){
                         
                 </div>
             </>:
-            
                     <h2>Choreographic List is Empty</h2>
-            
+            }
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?
@@ -134,8 +149,6 @@ function ChoreoList(){
                 </div>:
                 <></>
             }
-            
-            
             </div>
             </div>
         </>

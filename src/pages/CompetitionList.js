@@ -16,14 +16,23 @@ function CompetitionList(){
     const [rowsPerPage,setRowsPerPage]=useState(10);
     //const [compNationName, setCompNationName]=useState("")
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const user=AuthService.getCurrentUser();
     const loadCompetitions=()=>{
         axios.get("http://localhost:8080/competitions", {headers:authHeader()})
             .then(res=>{
                 setTotal(res.data.length)
                 console.log(res.data)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
 
     useEffect(()=>{
@@ -67,10 +76,15 @@ function CompetitionList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {
-                competitions.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                {
+                noData!=true?
                 <>
-            <h2 style={{padding:"10px 0 10px 0"}}>Competition List</h2>
+                <h2 style={{padding:"10px 0 10px 0"}}>Competition List</h2>
                 <div className="rowTable">
                     <table>
                         <thead>
@@ -147,6 +161,8 @@ function CompetitionList(){
             </>:
             <h2>Competition List is Empty</h2>
                 
+            }
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?

@@ -6,14 +6,25 @@ import AuthService from '../../services/auth.service';
 
 function OccupationDetail(){
     const [name, setName]=useState("");
+
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
     const {id}=useParams();
     const user=AuthService.getCurrentUser();
     const loadOccupation=()=>{
         axios.get(`http://localhost:8080/occupations/${id}`, {headers:authHeader()})
             .then(res=>{
                 setName(res.data.name)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+                setLoadComplete(true)
+                console.log(loadComplete)
+            })
     }
     useEffect(()=>{
         loadOccupation();
@@ -22,7 +33,12 @@ function OccupationDetail(){
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
+            {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+            {noData!=true?
                 <>
                 <div className="profile_grid1">
                     <h2>Occupation: <strong>{name}</strong></h2>
@@ -64,6 +80,8 @@ function OccupationDetail(){
                 </div>
                 </> 
                 :<h2>No Records</h2>
+                }
+                </>
                 }
            </div>
         </>

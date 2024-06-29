@@ -14,15 +14,24 @@ function UserList(){
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
    
+    
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const loadUsers=()=>{
         axios.get("http://localhost:8080/users")
             .then(res=>{
                 
                 setTotal(res.data)
-       
+                setLoadComplete(true)
+                console.log(loadComplete)
                 //window.location.reload();
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     
     useEffect(()=>{
@@ -82,7 +91,12 @@ function UserList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {users.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+            {noData!=true?
             <>
             <h2>User List</h2>
             <div className="labelsPost">
@@ -131,6 +145,8 @@ function UserList(){
             </div>
             </>:
                     <h2>User List is Empty</h2>
+            }
+            </>
             }
             <div className="createLink">
                 <Link className="link" to="/users/create">Post User</Link>

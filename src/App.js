@@ -151,8 +151,9 @@ function App() {
   };
   return (
     <div className="App">
+      <div style={{backgroundColor:"rgb(237, 255, 249)"}}>
       <Navbar collapseOnSelect expand="lg" className="bg-body-tertiary">
-      <Container style={{backgroundColor:"white", borderBottom:"1px solid", padding:"1em", fontSize:"1.2em", width:"100%"}}>
+      <Container style={{backgroundColor:"rgb(237, 255, 249)", borderBottom:"1px solid", padding:"1em", fontSize:"1.2em", width:"100%"}}>
         <Navbar.Brand href="/">Home</Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
@@ -248,7 +249,7 @@ function App() {
       </Navbar.Collapse>
       </Container>
     </Navbar>
-      
+    </div>  
       <div>
         
         <Routes>

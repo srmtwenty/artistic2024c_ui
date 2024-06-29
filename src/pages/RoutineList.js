@@ -17,12 +17,21 @@ function RoutineList(){
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const loadRoutines=()=>{
         axios.get("http://localhost:8080/routines", {headers:authHeader()})
             .then(res=>{
                 setTotal(res.data.length)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
 
     useEffect(()=>{
@@ -67,7 +76,13 @@ function RoutineList(){
             
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {routines.length!=0?
+                {
+                loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                {
+                    noData!=true?
                 <>
                     <h2>Routine List</h2>
          
@@ -130,6 +145,8 @@ function RoutineList(){
                 </>:
            
                     <h2>Routine List is Empty</h2>
+            }
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?

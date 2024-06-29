@@ -10,14 +10,18 @@ import AuthService from '../services/auth.service';
 function ImageList(){
     const [images, setImages]=useState([]);
 
-    const user=AuthService.getCurrentUser();
+    
     const [field, setField]=useState("id");
     const [total, setTotal]=useState(-1);
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const [file, setFile]=useState(null);
     //const [description, setDescription]=useState("");
+    const user=AuthService.getCurrentUser();
     const navigate=useNavigate()
 
     let axiosConfig={
@@ -53,8 +57,16 @@ function ImageList(){
             .then(res=>{
                 setImages(res.data)
                 console.log(res.data)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+                setLoadComplete(true)
+                console.log(loadComplete)
+            })
     }
     useEffect(()=>{
         loadImages()
@@ -116,7 +128,12 @@ function ImageList(){
 
                 <div className="profile_grid1">
                 <div className="labels">
-                {images.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                {noData!=true?
                 <>
                     <h2>Image List</h2>
          
@@ -147,6 +164,8 @@ function ImageList(){
                 </div>:
                 <></>
             }  
+            </>
+            }
             </div>
             </div>
         </div>

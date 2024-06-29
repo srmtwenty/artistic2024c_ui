@@ -14,6 +14,8 @@ function AddressList(){
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
 
     const navigate=useNavigate();
     const user=AuthService.getCurrentUser();
@@ -22,8 +24,14 @@ function AddressList(){
             .then(res=>{
                 console.log(res.data)
                 setTotal(res.data.length)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     
 
@@ -72,92 +80,96 @@ function AddressList(){
             <div className="profile_wrap2">
                 <div className="profile_grid1">
             {
-                addresses.length!=0?
-                <>
-                <h2 style={title}>Address List</h2>
-                    <div className="rowTable">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th><button onClick={()=>handleFieldName("id")}>Id</button></th>
-                                    <th>Content</th>
-                                    <th>Source</th>
-                                    <th>Dscription</th>
-                                    
-                                    <th>People</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-                                    addresses.map((address, i)=>
-                                    <tr key={i}>
-                                        <td><Link to={`/addresses/${address.id}`}>{address.id}</Link></td>
-                                        <td><img src={`http://localhost:8080/files/${address.url}`} style={{height:"150px"}}/></td>
-                                        <td>{address.source}</td>
-                                        <td>{address.description}</td>
+                loadComplete!=true?
+                <><h2>Now Loading</h2>
+                </>
+                :<>
+                    {
+                        noData!=true?
+                        <>
+                        <h2 style={title}>Address List</h2>
+                        <div className="rowTable">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th><button onClick={()=>handleFieldName("id")}>Id</button></th>
+                                        <th>Content</th>
+                                        <th>Source</th>
+                                        <th>Dscription</th>
                                         
-                                        <td>
-                                            <ul>
+                                        <th>People</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {
+                                        addresses.map((address, i)=>
+                                        <tr key={i}>
+                                            <td><Link to={`/addresses/${address.id}`}>{address.id}</Link></td>
+                                            <td><img src={`http://localhost:8080/files/${address.url}`} style={{height:"150px"}}/></td>
+                                            <td>{address.source}</td>
+                                            <td>{address.description}</td>
+                                            
+                                            <td>
+                                                <ul>
+                                                    {
+                                                        address.peopleAlt.map((p, i)=>
+                                                            <li key={i}>
+                                                                <Link to={`/people/${p.id}`}>{p.name}</Link>
+                                                            </li>
+                                                        )
+                                                    }
+                                                </ul>
+                                            </td>
+                                            
+                                            <td>
                                                 {
-                                                    address.peopleAlt.map((p, i)=>
-                                                        <li key={i}>
-                                                            <Link to={`/people/${p.id}`}>{p.name}</Link>
-                                                        </li>
-                                                    )
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <div className="tdButtonWrapper">
+                                                        <div className="tdButtonContainer1">
+                                                            <Link className="link" to={`/addresses/${address.id}/update`}>Edit</Link>    
+                                                        </div>
+                                                        <div className="tdButtonContainer2">
+                                                            <button onClick={()=>deleteAddress(address.id)}>Delete</button>
+                                                        </div>
+                                                    </div>:
+                                                    <></>
                                                 }
-                                            </ul>
-                                        </td>
-                                        
-                                        <td>
-                                            {
-                                                user && user.roles.includes("ROLE_ADMIN")?
-                                                <div className="tdButtonWrapper">
-                                                    <div className="tdButtonContainer1">
-                                                        <Link className="link" to={`/addresses/${address.id}/update`}>Edit</Link>    
-                                                    </div>
-                                                    <div className="tdButtonContainer2">
-                                                        <button onClick={()=>deleteAddress(address.id)}>Delete</button>
-                                                    </div>
-                                                </div>:
-                                                <></>
-                                            }
-                                        </td>
-                                    </tr>    
-                                    )
-                                }
-                            </tbody>
-                        </table>
-                        <Stack alignItems="left">
-                        <TablePagination 
-                            rowsPerPageOptions={[10, 25, 50]} 
-                            component="div"
-                            count={total}
-                            rowsPerPage={rowsPerPage}
-                            page={page}
-                            onPageChange={handleChangePage} 
-                            onRowsPerPageChange={handleChangeRowsPerPage} 
-                        />
-                        </Stack>
-                </div>
-            </>:
+                                            </td>
+                                        </tr>    
+                                        )
+                                    }
+                                </tbody>
+                            </table>
+                            <Stack alignItems="left">
+                            <TablePagination 
+                                rowsPerPageOptions={[10, 25, 50]} 
+                                component="div"
+                                count={total}
+                                rowsPerPage={rowsPerPage}
+                                page={page}
+                                onPageChange={handleChangePage} 
+                                onRowsPerPageChange={handleChangeRowsPerPage} 
+                            />
+                            </Stack>
+                    </div>
+                </>
+                :<h2>Address List is Empty</h2>
             
-                    <h2>Address List is Empty</h2>
+                }
+                
             
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?
                 <div className="createLink">
                     <Link className="link" to="/addresses/create">Create Address</Link>
                 </div>:
-                <></>
+            <></>
             }
             
-            
             </div>
-
-
-
             </div>
         </>
     )

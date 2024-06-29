@@ -7,6 +7,10 @@ import AuthService from '../../services/auth.service';
 function NationDetail(){
     const [name, setName]=useState("")
     const [people, setPeople]=useState([])
+    
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+    
     const {id}=useParams();
     const user=AuthService.getCurrentUser();
     const navigate=useNavigate();
@@ -15,9 +19,14 @@ function NationDetail(){
             .then(res=>{
                 console.log(res.data)
                 setName(res.data.name)
-
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     const loadPeopleForNation=()=>{
         axios.get(`http://localhost:8080/nations/${id}/people`, {headers:authHeader()})
@@ -36,7 +45,12 @@ function NationDetail(){
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
+            {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                    {noData!=true?
                 <>
                 <div className="profile_grid1">
                     <h2>Nation: <strong>{name}</strong></h2>
@@ -109,6 +123,8 @@ function NationDetail(){
                     </div>
                     </> 
                 :<h2>No Records</h2>
+                }
+                </>
                 }
             </div>    
         </>

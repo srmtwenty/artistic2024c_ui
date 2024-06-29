@@ -18,6 +18,8 @@ function SwimsuitDetailDetail(){
     const [personId, setPersonId]=useState(0)
     const [routines, setRoutines]=useState([])
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
     const {id}=useParams();
     const user=AuthService.getCurrentUser();
     const navigate=useNavigate();
@@ -31,15 +33,26 @@ function SwimsuitDetailDetail(){
                 setYear(res.data.year)
                 setSwimsuitProfilePic(res.data.swimsuitProfilePic)
                 console.log(res.data)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+                setLoadComplete(true)
+                console.log(loadComplete)
+            })
     }
     const loadSwimsuits=()=>{
         axios.get(`http://localhost:8080/swimsuitDetails/${id}/swimsuits`,{headers:authHeader()})
             .then(res=>{
                 setSwimsuits(res.data)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err);
+                setNoData(true);
+            })
     }
     const loadAllSwimsuits=()=>{
         axios.get("http://localhost:8080/addresses",{headers:authHeader()})
@@ -153,8 +166,13 @@ function SwimsuitDetailDetail(){
     return(
         <>
             <div className="profile_wrap2">
+            {
+                loadComplete!=true?
+                <><h2>Now Loading</h2>
+                </>
+                :<>
                 {
-                    name!=""?
+                    noData!=true?
                 <>
                 <div className="profile_grid1">
                         
@@ -338,7 +356,8 @@ function SwimsuitDetailDetail(){
                 </> 
                 :<h2>No Records</h2>
                 }
-
+                </>
+                }
 
             </div> 
         </>

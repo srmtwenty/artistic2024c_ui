@@ -9,17 +9,30 @@ function SoundtrackDetail(){
     const [description, setDescription]=useState("")
     const [musics, setMusics]=useState([])
     //const [allMusics, setAllMusics]=useState([])
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const user=AuthService.getCurrentUser();
     const navigate=useNavigate();
     const {id}=useParams();
     const loadSound=()=>{
         axios.get(`http://localhost:8080/soundtracks/${id}`, {headers:authHeader()})
             .then(res=>{
+                
                 console.log(res.data)
                 setName(res.data.name)
                 setDescription(res.data.description)
+                setLoadComplete(true)
+                console.log(loadComplete)
+                
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                setLoadComplete(true)
+                console.log(loadComplete)
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     /*const loadAllMusics=()=>{
         axios.get("http://localhost:8080/musics")
@@ -34,13 +47,16 @@ function SoundtrackDetail(){
                 
                 setMusics(res.data)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                
+            })
     }
     useEffect(()=>{
         loadSound();
         //loadAllMusics();
         loadMusics();
-    },[])
+    },[noData])
 
     const addMusic=(musicId)=>{
         axios.put(`http://localhost:8080/soundtracks/${id}/addMusic/${musicId}`, {headers:authHeader()})
@@ -62,9 +78,48 @@ function SoundtrackDetail(){
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
+                
+            {
+                loadComplete!=true?
                 <>
+                    <h2>Now Loading</h2>
+                    
+                </>
+                :<>
+
+            
+            {noData!=true?
+                <>
+                <div className="buttonsWrapDetail">
+                        {
+                            user && user.roles.includes("ROLE_ADMIN")?
+                            <>
+                            <div className="postDetail">
+                                <Link className="link" to="/soundtracks/create">Post</Link>  
+                            </div>
+                            <div style={{display:"flex"}}>
+                                <div className="backToDetail">
+                                    <Link className="link" to="/soundtracks">Back to List</Link> 
+                                </div>
+                                <div className="backToDetail">
+                                    <Link className="link" to={`/soundtracks/${id}/update`}>Update</Link> 
+                                </div>
+                                
+                            </div>
+                            </>
+                            :<>
+                                <div>
+                                    <div className="backToDetail">
+                                        <Link className="link" to="/soundtracks">Back to List</Link> 
+                                    </div>
+                                </div>
+                            </>
+                        }
+                        
+                    </div>  
                 <div className="profile_grid1">
+
+
                     <h2><strong>{name}</strong> Profile</h2>
                     <div className="labels">
                         <div className="row2">
@@ -92,7 +147,16 @@ function SoundtrackDetail(){
                             {description}
                         </div>
                     </div>
-                    <div className="buttonsWrapDetail">
+                      
+                </div>
+                </> 
+                :<h2>No Records</h2>
+                }
+
+                </>
+                }
+
+<div className="buttonsWrapDetail">
                         {
                             user && user.roles.includes("ROLE_ADMIN")?
                             <>
@@ -119,10 +183,6 @@ function SoundtrackDetail(){
                         }
                         
                     </div>    
-                </div>
-                </> 
-                :<h2>No Records</h2>
-                }
             </div>
         </>
     )

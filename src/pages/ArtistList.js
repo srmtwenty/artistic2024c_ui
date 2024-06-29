@@ -15,13 +15,23 @@ function ArtistList(){
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const user=AuthService.getCurrentUser();
     const loadArtists=()=>{
         axios.get("http://localhost:8080/artists", {headers:authHeader()})
             .then(res=>{
+                console.log(res.data)
                 setTotal(res.data.length)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     
     useEffect(()=>{
@@ -74,10 +84,15 @@ function ArtistList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {
-                artists.length!=0?
-                <>
-                <h2>Artist List</h2>
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                    {
+                    noData!=true?
+                    <>
+                    <h2>Artist List</h2>
               
                     <div className="rowTable">
                     <table>
@@ -128,6 +143,8 @@ function ArtistList(){
                     </div>
                 </>:
                 <h2>Artist List is Empty</h2>
+            }
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?

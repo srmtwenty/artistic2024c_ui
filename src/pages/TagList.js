@@ -17,12 +17,21 @@ function TagList(){
     const navigate=useNavigate();
 
     const user=AuthService.getCurrentUser();
+
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
     const loadTags=()=>{
         axios.get("http://localhost:8080/tags", {headers:authHeader()})
             .then(res=>{
                 setTotal(res.data.length)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
 
     useEffect(()=>{
@@ -78,7 +87,12 @@ function TagList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-                    {tags.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                    {noData!=true?
                     <>
                     <h2 style={title}>Tag List</h2>
                    
@@ -127,6 +141,8 @@ function TagList(){
                     </div>
                     </>:
                             <h2>Tag List is Empty</h2>  
+                    }
+                    </>
                     }
                     {
                         user && user.roles.includes("ROLE_ADMIN")?

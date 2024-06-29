@@ -17,6 +17,8 @@ function MusicDetail(){
     const [allComposers, setAllComposers]=useState([])
     const [allSoundtracks, setAllSoundtracks]=useState([])
     const [routines, setRoutines]=useState([])
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
 
     const user=AuthService.getCurrentUser();
     const navigate=useNavigate();
@@ -24,6 +26,8 @@ function MusicDetail(){
     const loadMusic=()=>{
         axios.get(`http://localhost:8080/musics/${id}`, {headers:authHeader()})
             .then(res=>{
+                setLoadComplete(true)
+                console.log(loadComplete)
                 setName(res.data.name)
                 setDescription(res.data.description)
                 setComposers(res.data.composers)
@@ -31,7 +35,13 @@ function MusicDetail(){
                 setSoundtrack(res.data.soundtrack)
                 setAddress(res.data.address)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                setLoadComplete(true)
+                console.log(loadComplete)
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
 
     const loadAllArtists=()=>{
@@ -71,7 +81,7 @@ function MusicDetail(){
         loadAllSoundtracks()
         loadSNSForMusic()
         loadRoutines()
-    },[])
+    },[noData])
 
     const addArtist=(artistId)=>{
         axios.put(`http://localhost:8080/musics/${id}/addArtist/${artistId}`, {},{headers:authHeader()})
@@ -146,20 +156,17 @@ function MusicDetail(){
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
+            {
+                loadComplete!=true?
+                <><h2>Now Loading</h2>
+                </>
+                :<>
+            
+            {noData!=true?
                 <>
                 <div className="profile_grid1">
-                    <h2><strong>{name}</strong> Profile</h2>
+                    <h2><strong>{name}</strong> Profile (Id: {id})</h2>
                     <div className="labels">
-                        <div className="row2">
-                            <span className="label">Id: </span>
-                            <span className="value">{id}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Name: </span>
-                            <span className="value">{name}</span>
-                        </div>
-                        
                         
                         <div className="row2">
                             <span className="label">Soundtrack: </span>
@@ -362,6 +369,9 @@ function MusicDetail(){
                 </> 
                 :<h2>No Records</h2>
                 }
+                
+                </>
+            }
             </div> 
         </>
     )

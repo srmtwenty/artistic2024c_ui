@@ -35,6 +35,8 @@ function Navbar(){
     };
     return (
  
+      <div style={{backgroundColor:"cyan"}}>
+        <h2>Test</h2>
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <Link to={"/"} className="navbar-brand">
           scott
@@ -171,6 +173,8 @@ function Navbar(){
             </li>
           </div>
         )}
-      </nav>)
+      </nav>
+      </div>
+      )
 }
 export default Navbar;

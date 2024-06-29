@@ -13,6 +13,10 @@ function NationalTeamDetail(){
     const user=AuthService.getCurrentUser();
     const [allNations, setAllNations]=useState([])
     const [allPeople, setAllPeople]=useState([])
+
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const {id}=useParams();
     const navigate=useNavigate();
     const loadNationalTeam=()=>{
@@ -23,8 +27,14 @@ function NationalTeamDetail(){
                 setDescription(res.data.description)
                 setNation(res.data.nation)
                 setMembers(res.data.members)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     const loadAllNations=()=>{
         axios.get("http://localhost:8080/nations", {headers:authHeader()})
@@ -78,7 +88,12 @@ function NationalTeamDetail(){
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
+            {
+                loadComplete!=true?
+                <><h2>Now Loading</h2>
+                </>
+                :<>    
+            {noData!=true?
                 <>
                 <div className="profile_grid1">
                     <h2><strong>{name}</strong></h2>
@@ -252,6 +267,8 @@ function NationalTeamDetail(){
                 
                 </> 
                 :<h2>No Records</h2>
+                }
+                </>
                 }
             </div>           
         </>

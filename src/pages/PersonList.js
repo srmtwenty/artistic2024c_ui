@@ -11,9 +11,7 @@ function PersonList(){
     const [people, setPeople]=useState([])
     const [pName, setPName]=useState([])
     const [cont, setCont]=useState([])
-    const navigate=useNavigate();
-
-    const user=AuthService.getCurrentUser();
+    
     const [field, setField]=useState("id");
     const [total, setTotal]=useState(-1);
     const [page, setPage]=useState(0);
@@ -24,13 +22,25 @@ function PersonList(){
     const [nations, setNations]=useState([]);
     const [allNations, setAllNations]=useState([])
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
+    const navigate=useNavigate();
+    const user=AuthService.getCurrentUser();
+
     const loadPeople=()=>{
         axios.get("http://localhost:8080/people", {headers:authHeader()})
             .then(res=>{
-                setTotal(res.data.length)
                 console.log(res.data)
+                setTotal(res.data.length)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     
 
@@ -40,9 +50,6 @@ function PersonList(){
         loadPeopleByName();
         loadPeopleByNation();
         loadAllNations();
-            
-        
-       
     },[page, field, rowsPerPage, field, str, nation])
 
     const deletePerson=(id)=>{
@@ -127,9 +134,13 @@ function PersonList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-                  
                 {
-                    people?
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+                {
+                    noData!=true?
                     <>
                     
                     <div style={{display:"flex", justifyContent:"space-between", margin:"auto",maxWidth:"1000px"}}>
@@ -280,13 +291,12 @@ function PersonList(){
                             onRowsPerPageChange={handleChangeRowsPerPage} 
                         />
                         </Stack>
-                        
                     </div>
                     
-                
-                
-            </>:
-                    <h2>Person List is Empty</h2>
+                </>:
+                <h2>Person List is Empty</h2>
+                }
+            </> 
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?

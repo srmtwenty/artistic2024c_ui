@@ -8,6 +8,9 @@ import AuthService from '../services/auth.service';
 
 function SoundtrackList(){
     const [soundtracks, setSoundtracks]=useState([]);
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+    
     const navigate=useNavigate();
 
     const user=AuthService.getCurrentUser();
@@ -16,14 +19,22 @@ function SoundtrackList(){
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+    
+
     const loadSoundtrackList=()=>{
         axios.get("http://localhost:8080/soundtracks", {headers:authHeader()})
             .then(res=>
                 {
                     setTotal(res.data.length)
+                    setLoadComplete(true)
+                    console.log(loadComplete)
                 }
             )
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     
     useEffect(()=>{
@@ -69,7 +80,12 @@ function SoundtrackList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {soundtracks.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+            {noData!=true?
             <>
             <h2>Soundtracks List</h2>
                 <div className="rowTable">
@@ -122,6 +138,8 @@ function SoundtrackList(){
             </div>
             </>:
                 <h2>Soundtrack List is Empty</h2>
+            }
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?

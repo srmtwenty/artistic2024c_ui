@@ -10,17 +10,28 @@ function ComposerList(){
     const [composers, setComposers]=useState([])
     const navigate=useNavigate();
 
-    const user=AuthService.getCurrentUser();
     const [field, setField]=useState("id");
     const [total, setTotal]=useState(0);
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
+
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+    const user=AuthService.getCurrentUser();
+
     const loadComposers=()=>{
         axios.get("http://localhost:8080/composers", {headers:authHeader()})
             .then(res=>{
+                console.log(res.data)
                 setTotal(res.data)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
 
     useEffect(()=>{
@@ -67,8 +78,14 @@ function ComposerList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {
-                composers.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+            
+                {
+                noData!=true?
                 <>
                 <h2>Composer List</h2>
               
@@ -121,6 +138,8 @@ function ComposerList(){
                 </div>
             </>:
             <h2>Composer List is Empty</h2>
+            }
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?

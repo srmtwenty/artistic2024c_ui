@@ -19,6 +19,9 @@ function ArticleDetail(){
     const navigate=useNavigate();
     const {id}=useParams();
     const user=AuthService.getCurrentUser();
+
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
     const loadArticle=()=>{
         axios.get(`http://localhost:8080/articles/${id}`, {headers:authHeader()})
             .then(res=>{
@@ -26,8 +29,14 @@ function ArticleDetail(){
                 setAddress(res.data.address)
                 setDate(res.data.date)
                 setDescription(res.data.description)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     const loadAllPeople=()=>{
         axios.get("http://localhost:8080/people", {headers:authHeader()})
@@ -120,188 +129,195 @@ function ArticleDetail(){
     return(
         <>
             <div className="profile_wrap2">
-            {name!=""?
-                <>
-                <div className="profile_grid1">
-                    <h2><strong>{name}</strong> Profile</h2>
-                    <div className="labels">
-                        <div className="row2">
-                            <span className="label">Id: </span>
-                            <span className="value">{id}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Name: </span>
-                            <span className="value">{name}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Address: </span>
-                            <span className="value"><Link to={address}>{address}</Link></span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Date: </span>
-                            <span className="value">{date.toLocaleString().split(',')[0]}</span>
-                        </div>
-                        
-                        <div className="row2">
-                            <span className="label2">People:</span>
-                            <ul className="ultest2">
-                            {   
-                                people.length!=0?
-                                people.map((p, i)=>(
-                                    <li key={i}><Link to={`/people/${p.id}`}>{p.name}</Link>
-                                        {
-                                            user && user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
-                                            :<></>
-                                        }
-                                        
-                                    
-                                    </li>
-                                )):
-                                <>Null</>
-                            }
-                            </ul>
-                        </div>
-                        
-                        <div className="row2">    
-                            <span className="label2">Tags:</span>
-                            <div className="ultest2">
-                                <ul>
-                                    <li style={{verticalAlign:"top"}}>
-                                        {
-                                            user && user.roles.includes("ROLE_ADMIN")?
-                                            <form onSubmit={addTag2}>
-                                                <div>
-                                                    <input type="text"  placeholder="Enter Tag Name" style={{width: "10em"}} onChange={(e)=>setTName(e.target.value)}/>
-                                                    <input type="submit" id="submitbtn"/>
-                                                </div> 
-                                            </form>:
-                                            <></>
-                                        }
-                                        
-                                    </li>
-                                </ul>
-                                
-                                <div className="tag_block"> 
-                                    {   
-                                    tags?
-                                    tags.map((t, i)=>(
-                                        <div key={i} className="tag_field">
-                                            <a href={`/tags/${t.id}`} className="tag">{t.name}</a><button onClick={()=>removeTag(t.id)} className="buttonTag">x</button>
-                                        </div>
-                                    )):
-                                    <>Null</>
-                                    }
+            {
+                loadComplete!=true?
+                <><h2>Now Loading</h2></>
+                :<>
+                {
+                    noData!=true?
+                    <>
+                        <div className="profile_grid1">
+                            <h2><strong>{name}</strong> Profile</h2>
+                            <div className="labels">
+                                <div className="row2">
+                                    <span className="label">Id: </span>
+                                    <span className="value">{id}</span>
                                 </div>
+                                <div className="row2">
+                                    <span className="label">Name: </span>
+                                    <span className="value">{name}</span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Address: </span>
+                                    <span className="value"><Link to={address}>{address}</Link></span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Date: </span>
+                                    <span className="value">{date.toLocaleString().split(',')[0]}</span>
+                                </div>
+                                
+                                <div className="row2">
+                                    <span className="label2">People:</span>
+                                    <ul className="ultest2">
+                                    {   
+                                        people.length!=0?
+                                        people.map((p, i)=>(
+                                            <li key={i}><Link to={`/people/${p.id}`}>{p.name}</Link>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
+                                                    :<></>
+                                                }
+                                                
+                                            
+                                            </li>
+                                        )):
+                                        <>Null</>
+                                    }
+                                    </ul>
+                                </div>
+                                
+                                <div className="row2">    
+                                    <span className="label2">Tags:</span>
+                                    <div className="ultest2">
+                                        <ul>
+                                            <li style={{verticalAlign:"top"}}>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <form onSubmit={addTag2}>
+                                                        <div>
+                                                            <input type="text"  placeholder="Enter Tag Name" style={{width: "10em"}} onChange={(e)=>setTName(e.target.value)}/>
+                                                            <input type="submit" id="submitbtn"/>
+                                                        </div> 
+                                                    </form>:
+                                                    <></>
+                                                }
+                                                
+                                            </li>
+                                        </ul>
+                                        
+                                        <div className="tag_block"> 
+                                            {   
+                                            tags?
+                                            tags.map((t, i)=>(
+                                                <div key={i} className="tag_field">
+                                                    <a href={`/tags/${t.id}`} className="tag">{t.name}</a><button onClick={()=>removeTag(t.id)} className="buttonTag">x</button>
+                                                </div>
+                                            )):
+                                            <>Null</>
+                                            }
+                                        </div>
+                                    </div>
+                                    
+                                </div> 
+                                <div className="row2">
+                                    <p>{description}</p> 
+                                </div>   
                             </div>
-                              
-                        </div> 
-                        <div className="row2">
-                            <p>{description}</p> 
-                        </div>   
-                    </div>
-                    <div className="buttonsWrapDetail">
+                            <div className="buttonsWrapDetail">
+                                {
+                                    user && user.roles.includes("ROLE_ADMIN")?
+                                    <>
+                                        <div className="postDetail">
+                                            <Link className="link" to="/articles/create">Post Person</Link>
+                                        </div>
+                                        <div style={{display:"flex"}}>
+                                            <div className="backToDetail">
+                                                <Link className="link" to="/articles">Back to List</Link>  
+                                            </div>
+                                            <div className="backToDetail">
+                                                <Link className="link" to={`/articles/${id}/update`}>Update</Link>
+                                            </div>
+                                            
+                                        </div></>
+                                    :<>
+                                        <div>
+                                            <div className="backToDetail">
+                                                <Link className="link" to="/articles">Back to List</Link>  
+                                            </div>           
+                                        </div>
+                                    </>
+                                }
+                                
+                            </div>
+                        </div>
                         {
                             user && user.roles.includes("ROLE_ADMIN")?
                             <>
-                                <div className="postDetail">
-                                    <Link className="link" to="/articles/create">Post Person</Link>
-                                </div>
-                                <div style={{display:"flex"}}>
-                                    <div className="backToDetail">
-                                        <Link className="link" to="/articles">Back to List</Link>  
+                            <div className="profile_grid1">
+                                <h2>All People</h2>
+                                <div className="labelsPost">
+                                    <div className="rowTable">
+                                    {
+                                        allPeople.length!=0?
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allPeople.map((person, i)=>(
+                                                <tr key={i}>
+                                                    <td>{person.id}</td>
+                                                    <td><Link to={`/articles/${person.id}`}>{person.name}</Link></td>
+                                                    <td>
+                                                        <button onClick={()=>addPerson(person.id)}>Add Person</button>
+                                                    </td>
+                                                </tr>
+                                                ))
+                                            }  
+                                        </tbody>
+                                    </table>:
+                                        <p>All People List is empty</p>
+                                    }
                                     </div>
-                                    <div className="backToDetail">
-                                        <Link className="link" to={`/articles/${id}/update`}>Update</Link>
-                                    </div>
-                                    
-                                </div></>
-                            :<>
-                                <div>
-                                    <div className="backToDetail">
-                                        <Link className="link" to="/articles">Back to List</Link>  
-                                    </div>           
                                 </div>
-                            </>
+                        </div>
+                        <div className="profile_grid1">
+                            <h2>All Tags</h2>
+                                <div className="labelsPost">
+                                    <div className="rowTable">
+                                    {
+                                    allTags.length!=0?
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allTags.map((tag, i)=>(
+                                                <tr key={i}>
+                                                    <td>{tag.id}</td>
+                                                    <td>{tag.name}</td>
+                                                    <td>
+                                                        <button onClick={()=>addTag(tag.id)}>Add Tag</button>
+                                                        <button onClick={()=>removeTag(tag.id)}>x</button>
+                                                    </td>
+                                                </tr>
+                                                ))
+                                            }  
+                                        </tbody>
+                                    </table>:
+                                    <p>Tag List is Empty</p>
+                                    } 
+                                    </div>
+                                </div>
+                        </div></>:
+                        <></>  
                         }
                         
-                    </div>
-                </div>
-                {
-                    user && user.roles.includes("ROLE_ADMIN")?
-                    <>
-                    <div className="profile_grid1">
-                        <h2>All People</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            {
-                                allPeople.length!=0?
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allPeople.map((person, i)=>(
-                                        <tr key={i}>
-                                            <td>{person.id}</td>
-                                            <td><Link to={`/articles/${person.id}`}>{person.name}</Link></td>
-                                            <td>
-                                                <button onClick={()=>addPerson(person.id)}>Add Person</button>
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }  
-                                </tbody>
-                            </table>:
-                                <p>All People List is empty</p>
-                            }
-                            </div>
-                        </div>
-                </div>
-                <div className="profile_grid1">
-                    <h2>All Tags</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            {
-                            allTags.length!=0?
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allTags.map((tag, i)=>(
-                                        <tr key={i}>
-                                            <td>{tag.id}</td>
-                                            <td>{tag.name}</td>
-                                            <td>
-                                                <button onClick={()=>addTag(tag.id)}>Add Tag</button>
-                                                <button onClick={()=>removeTag(tag.id)}>x</button>
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }  
-                                </tbody>
-                            </table>:
-                            <p>Tag List is Empty</p>
-                            } 
-                            </div>
-                        </div>
-                </div></>:
-                <></>  
-                }
-                
-                </> 
-                :<h2>No Records</h2>
+                        </> 
+                        :<h2>No Records</h2>
+                    }
+                    </>
                 }
             </div>
         </>

@@ -16,13 +16,22 @@ function OccupationList(){
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
 
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+
     const loadOccupations=()=>{
         axios.get("http://localhost:8080/occupations", {headers:authHeader()})
             .then(res=>{
                 setTotal(res.data.length)
                 //console.log(res.data)
+                setLoadComplete(true)
+                console.log(loadComplete)
             })
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
     
     useEffect(()=>{
@@ -66,7 +75,14 @@ function OccupationList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-                {occupations.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+
+                {
+                    noData!=true?
                 <>
                 <h2>Occupation List</h2>
                     <div className="rowTable">
@@ -120,6 +136,8 @@ function OccupationList(){
             
                     <h2>Occupation List is Empty</h2>
                 }
+                </>
+                }
                 {
                     user && user.roles.includes("ROLE_ADMIN")?
                     <div className="createLink">
@@ -127,7 +145,7 @@ function OccupationList(){
                     </div>:
                     <></>
                 }
-            </div>
+                </div>
             </div>
         </>
     )

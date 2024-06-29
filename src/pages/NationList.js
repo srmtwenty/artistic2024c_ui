@@ -8,21 +8,32 @@ import AuthService from '../services/auth.service';
 
 function NationList(){
     const [nations, setNations]=useState([]);
+    const [people, setPeople]=useState([]);
     const navigate=useNavigate();
-    const user=AuthService.getCurrentUser();
+    
 
     const [field, setField]=useState("id");
     const [total, setTotal]=useState(-1);
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
+    
+    const [loadComplete, setLoadComplete]=useState(false);
+    const [noData, setNoData]=useState(false);
+    const user=AuthService.getCurrentUser();
     const loadNationList=()=>{
         axios.get("http://localhost:8080/nations", {headers:authHeader()})
             .then(res=>
                 {
                     setTotal(res.data.length)
+                    setLoadComplete(true)
+                    console.log(loadComplete)
                 }
             )
-            .catch(err=>console.log(err))
+            .catch(err=>{
+                console.log(err)
+                setNoData(true)
+                console.log(noData)
+            })
     }
 
     useEffect(()=>{
@@ -35,9 +46,7 @@ function NationList(){
             .then(res=>{
                 window.location.reload();
                 navigate("/nations")
-            }
-                
-            )
+            })
             .catch(err=>console.log(err))
     }
     const loadNationsPagination=()=>{
@@ -67,8 +76,14 @@ function NationList(){
         <>
             <div className="profile_wrap2">
                 <div className="profile_grid1">
-            {
-                nations.length!=0?
+                {
+                    loadComplete!=true?
+                    <><h2>Now Loading</h2>
+                    </>
+                    :<>
+            
+                {
+                noData!=true?
                 <>
                 <h2>Nation List</h2>
              
@@ -78,7 +93,7 @@ function NationList(){
                         <tr>
                             <th><button onClick={()=>handleFieldName("id")}>Id</button></th>
                             <th><button onClick={()=>handleFieldName("name")}>Name</button></th>
-                        
+                            <th># of People</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -88,7 +103,7 @@ function NationList(){
                             <tr key={i}>
                                 <td><Link to={`/nations/${nation.id}`}>{nation.id}</Link></td>
                                 <td>{nation.name}</td>
-                             
+                                <td></td>
                                 <td>
                                     {
                                         user && user.roles.includes("ROLE_ADMIN")?
@@ -125,7 +140,9 @@ function NationList(){
                 </div>
           
             </>:
-                    <h2>Nation List is Empty</h2>
+            <h2>Nation List is Empty</h2>
+            }
+            </>
             }
             {
                 user && user.roles.includes("ROLE_ADMIN")?
