@@ -75,21 +75,35 @@ function ArtistDetail(props){
                                 <span className="value">{name}</span>
                             </div>
                             <div className="row2">
-                                <span className="label2">Musics(ref):</span>
+                                <span className="label">Musics(ref):</span>
                                 <ul className="ultest2">
                                 {
                                     musics.map((music, i)=>(
-                                        <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link></li>
+                                        <li key={i}>
+                                            <Link to={`/musics/${music.id}`}>{music.name}
+                                            
+                                            </Link>
+                                        </li>
                                     ))
                                 }
                                 </ul>
                             </div>
                             <div className="row2">
-                                <span className="label2">Musics For Composer(ref):</span>
+                                <span className="label">Musics For Composer(ref):</span>
                                 <ul className="ultest2">
                                 {
                                     musicsComposer.map((mc, i)=>(
-                                        <li key={i}><Link to={`/musics/${mc.id}`}>{mc.name}</Link></li>
+                                        <li key={i}>
+                                            <Link to={`/musics/${mc.id}`}>{mc.name}
+                                            {
+                                                mc.soundtrack?
+                                                <>
+                                                    ({mc.soundtrack.name})
+                                                </>
+                                                :<></>
+                                            }
+                                            </Link>
+                                        </li>
                                     ))
                                 }
                                 </ul>

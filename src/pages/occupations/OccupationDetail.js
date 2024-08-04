@@ -34,55 +34,56 @@ function OccupationDetail(){
         <>
             <div className="profile_wrap2">
             {
-                    loadComplete!=true?
-                    <><h2>Now Loading</h2>
-                    </>
-                    :<>
-            {noData!=true?
-                <>
-                <div className="profile_grid1">
-                    <h2>Occupation: <strong>{name}</strong></h2>
-                    <div className="labels">
-                        <div className="row2">
-                            <span className="label">Id: </span>
-                            <span className="value">{id}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Name: </span>
-                            <span className="value">{name}</span>
-                        </div>
-                    </div>
-                    <div className="buttonsWrapDetail">
-                        {
-                            user && user.roles.includes("ROLE_ADMIN")?
-                            <>
-                            <div className="postDetail">
-                                <Link className="link" to="/occupations/create">Post</Link>  
+                loadComplete!=true?
+                <><h2>Now Loading</h2>
+                </>
+                :<>
+                {
+                    noData!=true?
+                    <>
+                        <div className="profile_grid1">
+                            <h2>Occupation: <strong>{name}</strong></h2>
+                            <div className="labels">
+                                <div className="row2">
+                                    <span className="label">Id: </span>
+                                    <span className="value">{id}</span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Name: </span>
+                                    <span className="value">{name}</span>
+                                </div>
                             </div>
-                            <div style={{display:"flex"}}>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/occupations">Back to List</Link>
-                                </div>
-                                <div className="backToDetail">
-                                    <Link className="link" to={`/occupations/${id}/update`}>Update</Link> 
-                                </div>
+                            <div className="buttonsWrapDetail">
+                                {
+                                    user && user.roles.includes("ROLE_ADMIN")?
+                                    <>
+                                    <div className="postDetail">
+                                        <Link className="link" to="/occupations/create">Post</Link>  
+                                    </div>
+                                    <div style={{display:"flex"}}>
+                                        <div className="backToDetail">
+                                            <Link className="link" to="/occupations">Back to List</Link>
+                                        </div>
+                                        <div className="backToDetail">
+                                            <Link className="link" to={`/occupations/${id}/update`}>Update</Link> 
+                                        </div>
+                                        
+                                    </div>    
+                                    </>:
+                                    <>
+                                        <div className="backToDetail">
+                                            <Link className="link" to="/occupations">Back to List</Link>
+                                        </div>
+                                    </>
+                                }
                                 
-                            </div>    
-                            </>:
-                            <>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/occupations">Back to List</Link>
-                                </div>
-                            </>
-                        }
-                        
-                    </div>
-                </div>
-                </> 
-                :<h2>No Records</h2>
+                            </div>
+                        </div>
+                    </> 
+                    :<h2>No Records</h2>
                 }
                 </>
-                }
+            }
            </div>
         </>
     )

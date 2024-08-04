@@ -297,7 +297,6 @@ function AddressDetail(){
         loadPerson2(personId2);
         loadPerson3(personId3);
         loadAddressAlt(addressIdAlt)
-        
         loadAddressesForPerson(personId);
         loadAddressesForPerson2(personId2);
         loadAddressesForPerson3(personId3);
@@ -305,11 +304,8 @@ function AddressDetail(){
         loadAddressAlt_B(addressId2)
         loadAddressAlt_C(addressId3)
          
-
-        
     },[personId, personId2, personId3, 
         addressId, addressId2, addressId3, addressIdAlt,
-        
         startNum, endNum, currentPage,allAddressImages.length,
         addresses3.length,
         /*

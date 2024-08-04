@@ -27,6 +27,7 @@ function NationList(){
                     setTotal(res.data.length)
                     setLoadComplete(true)
                     console.log(loadComplete)
+                    console.log(res.data)
                 }
             )
             .catch(err=>{
@@ -35,10 +36,20 @@ function NationList(){
                 console.log(noData)
             })
     }
+    const loadPeopleForNation=(nationId)=>{
+        axios.get(`http://localhost:8080/nations/${nationId}/people`, {headers:authHeader()})
+            .then(res=>{
+                console.log(res.data)
+                
+
+            },[])
+            .catch(err=>console.log(err))
+    }
 
     useEffect(()=>{
         loadNationList();
         loadNationsPagination();
+        loadPeopleForNation();
     },[page, field, rowsPerPage, field])
 
     const deleteNation=(id)=>{
@@ -103,7 +114,9 @@ function NationList(){
                             <tr key={i}>
                                 <td><Link to={`/nations/${nation.id}`}>{nation.id}</Link></td>
                                 <td>{nation.name}</td>
-                                <td></td>
+                                <td> 
+                                    {loadPeopleForNation(nation.id)}  
+                                </td>
                                 <td>
                                     {
                                         user && user.roles.includes("ROLE_ADMIN")?

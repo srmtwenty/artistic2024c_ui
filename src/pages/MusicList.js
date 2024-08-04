@@ -13,7 +13,7 @@ function MusicList(){
     const [field, setField]=useState("id");
     const [total, setTotal]=useState(-1);
     const [page, setPage]=useState(0);
-    const [rowsPerPage,setRowsPerPage]=useState(10);
+    const [rowsPerPage,setRowsPerPage]=useState(30);
 
     const [loadComplete, setLoadComplete]=useState(false);
     const [noData, setNoData]=useState(false);
@@ -73,6 +73,10 @@ function MusicList(){
         setRowsPerPage(parseInt(e.target.value, 10));
         setPage(0);
         //loadMusicsPagination();
+    }
+    const pageChange=(e)=>{
+        e.preventDefault()
+        
     }
     return(
         <>
@@ -136,6 +140,13 @@ function MusicList(){
                                             onRowsPerPageChange={handleChangeRowsPerPage} 
                                         />
                                     </Stack>
+                                    <div>
+                                        <p>Page:{page}</p>
+                                        <form onSubmit={pageChange}>
+                                            <input type="number" onChange={(e)=>setPage(e.target.value)} placeholder={page}/>
+                                            <input type="submit" id="submitbtn"/>
+                                        </form>
+                                    </div>
                                 </div>
                             </>
                             :<h2>Music List is Empty</h2>

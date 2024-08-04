@@ -137,16 +137,13 @@ function ArticleDetail(){
                     noData!=true?
                     <>
                         <div className="profile_grid1">
-                            <h2><strong>{name}</strong> Profile</h2>
+                            <h2><strong>{name}</strong></h2>
                             <div className="labels">
                                 <div className="row2">
                                     <span className="label">Id: </span>
                                     <span className="value">{id}</span>
                                 </div>
-                                <div className="row2">
-                                    <span className="label">Name: </span>
-                                    <span className="value">{name}</span>
-                                </div>
+                                
                                 <div className="row2">
                                     <span className="label">Address: </span>
                                     <span className="value"><Link to={address}>{address}</Link></span>
@@ -157,7 +154,7 @@ function ArticleDetail(){
                                 </div>
                                 
                                 <div className="row2">
-                                    <span className="label2">People:</span>
+                                    <span className="label">People:</span>
                                     <ul className="ultest2">
                                     {   
                                         people.length!=0?
@@ -178,9 +175,9 @@ function ArticleDetail(){
                                 </div>
                                 
                                 <div className="row2">    
-                                    <span className="label2">Tags:</span>
-                                    <div className="ultest2">
-                                        <ul>
+                                    <span className="label">Tags:</span>
+                                    <div>
+                                        <ul className="ultest2">
                                             <li style={{verticalAlign:"top"}}>
                                                 {
                                                     user && user.roles.includes("ROLE_ADMIN")?

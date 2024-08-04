@@ -8,6 +8,7 @@ function ComposerDetail(){
     const [name, setName]=useState("")
     const [description, setDescription]=useState("")
     const [musics, setMusics]=useState([])
+    
     //const [allMusics, setAllMusics]=useState([])
     const user=AuthService.getCurrentUser();
     const {id}=useParams();
@@ -21,6 +22,7 @@ function ComposerDetail(){
                 setDescription(res.data.description)
                 setMusics(res.data.musics)
                 console.log(res.data);
+                console.log(res.data.musics)
                 setLoadComplete(true)
                 console.log(loadComplete)
             })
@@ -44,6 +46,7 @@ function ComposerDetail(){
         axios.get(`http://localhost:8080/composers/${id}/musics`, {headers:authHeader()})
             .then(res=>{
                 setMusics(res.data)
+
             })
             .catch(err=>console.log(err))
     }
@@ -143,7 +146,15 @@ function ComposerDetail(){
                                             musics.map((m)=>(
                                             <tr>
                                                 <td><Link to={`/musics/${m.id}`}>{m.id}</Link></td>
-                                                <td><Link to={`/musics/${m.id}`}>{m.name}</Link></td>
+                                                <td><Link to={`/musics/${m.id}`}>{m.name}
+                                                {
+                                                    m.soundtrack?
+                                                    <>
+                                                        ({m.soundtrack.name})
+                                                    </>
+                                                    :<></>
+                                                }
+                                                </Link></td>
                                             </tr>
                                             ))
                                         }

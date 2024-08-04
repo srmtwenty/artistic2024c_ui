@@ -58,7 +58,7 @@ function SwimsuitDetailList(){
             {
                 noData!=true?
                 <>
-                <h2>Swimsuit Detail List</h2>
+                <h2>Swimsuit List</h2>
                  <div className="rowTable">
                
                     <table>
@@ -66,8 +66,8 @@ function SwimsuitDetailList(){
                             <tr>
                                 <th>Id</th>
                                 <th>Name</th>
-                                <th>Content</th>
-                                <th>People</th>
+                                <th>Photo</th>
+                                <th>Athletes</th>
                                 <th>Action</th>
                             </tr>
                         </thead>

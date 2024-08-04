@@ -51,7 +51,7 @@ function MusicUpdate(){
                                 <label className="labelPost">Name:</label>
                                 <input type="text" onChange={(e)=>setName(e.target.value)} value={name}/>
                             </div>
-                            <div className="rowTextArea">
+                            <div className="row2">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="4" cols="50" onChange={(e)=>setDescription(e.target.value)} value={description}/>
                             </div>

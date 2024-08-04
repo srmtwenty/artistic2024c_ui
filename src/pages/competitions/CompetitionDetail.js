@@ -93,11 +93,7 @@ function CompetitionDetail(){
                             
                             <div className="row2">
                                 <span className="label">Location: </span>
-                                <span className="value">{location}</span>
-                            </div>
-                            <div className="row2">
-                                <span className="label">Nation: </span>
-                                <span className="value">
+                                <span className="value">{location},
                                 {
                                     nation?
                                     <><Link to={`/nations/${nation.id}`}>{nation.name}</Link>
@@ -109,30 +105,25 @@ function CompetitionDetail(){
                                     </>:
                                     <>null</>
                                 }    
+
                                 </span>
                             </div>
+                            
                             <div className="row2">
                                 <span className="label">Date: </span>
                                 <span className="value">
                                     {date!=null?
                                     <>{date.toLocaleString().split(',')[0]}</>
-                                    :<></>}
-                                </span>
-                            </div>
-                            <div className="row2">
-                                <span className="label">End Date: </span>
-                                <span className="value">
+                                    :<>???</>}
+                                    -
                                     {endDate!=null?
                                     <>{endDate.toLocaleString().split(',')[0]}</>
-                                    :<></>}
+                                    :<>???</>}
                                 </span>
                             </div>
-                            <div className="row2">
-                                <p>{description}</p> 
-                            </div> 
 
                             <div className="row2">
-                                <span className="label2">Routines:</span>
+                                <span className="label">Routines:</span>
                                 <ul className="ultest2">
                                 {
                                     routines?
@@ -142,7 +133,11 @@ function CompetitionDetail(){
                                     :<>Null</>
                                 }
                                 </ul>
-                            </div>  
+                            </div>
+
+                            <div className="row2">
+                                <p>{description}</p> 
+                            </div>   
                         </div>
                         
                     </div>

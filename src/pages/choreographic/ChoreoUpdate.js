@@ -44,7 +44,7 @@ function ChoreoUpdate(){
                 </div>
                 <div>
                     <label>Description:</label>
-                    <input type="text" onChange={(e)=>setDescription(e.target.value)} value={description}/>
+                    <textarea onChange={(e)=>setDescription(e.target.value)} value={description}/>
                 </div>
                 <div>
                     <label>Skills</label>

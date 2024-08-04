@@ -31,7 +31,7 @@ function ChoreoPost(){
                 </div>
                 <div>
                     <label>Description:</label>
-                    <input type="text" onChange={(e)=>setDescription(e.target.value)}/>
+                    <textarea type="text" onChange={(e)=>setDescription(e.target.value)}/>
                 </div>
                 <div>
                     <label>Skills</label>

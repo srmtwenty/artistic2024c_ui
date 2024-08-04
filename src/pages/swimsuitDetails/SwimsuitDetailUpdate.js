@@ -51,7 +51,7 @@ function SwimsuitDetailUpdate(){
                                 <label className="labelPost">Name:</label>
                                 <input type="text" onChange={(e)=>setName(e.target.value)} value={name}/>
                             </div>
-                            <div className="rowTextArea">
+                            <div className="row2">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="3" cols="40" onChange={(e)=>setDescription(e.target.value)} value={description}/>
                             </div>
@@ -59,7 +59,7 @@ function SwimsuitDetailUpdate(){
                                 <label className="labelPost">Color:</label>
                                 <input type="text" onChange={(e)=>setColor(e.target.value)} value={color}/>
                             </div>
-                            <div className="rowTextArea">
+                            <div className="row2">
                                 <label className="labelPost">Year:</label>
                                 <input type="text" onChange={(e)=>setYear(e.target.value)} value={year}/>
                             </div>

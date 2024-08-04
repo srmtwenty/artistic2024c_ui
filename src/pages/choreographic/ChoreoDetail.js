@@ -10,6 +10,8 @@ function ChoreoDetail(){
     const [skills, setSkills]=useState("")
     const [nation, setNation]=useState(0);
     const [people, setPeople]=useState([])
+    const [musics, setMusics]=useState([])
+    const [allMusics, setAllMusics]=useState([])
     const [allPeople, setAllPeople]=useState([])
     const [allNations, setAllNations]=useState([])
     const [routines, setRoutines]=useState([])
@@ -17,6 +19,8 @@ function ChoreoDetail(){
     const [swimsuits, setSwimsuits]=useState([])
     const [allSwimsuits, setAllSwimsuits]=useState([])
 
+    const [addressId, setAddressId]=useState(0)
+    const [addressURL, setAddressURL]=useState("");
     const [profileAddress, setProfileAddress]=useState(0);
     const [allAddresses, setAllAddresses]=useState([])
     const [postPerPage, setPostPerPage]=useState(20)
@@ -36,6 +40,8 @@ function ChoreoDetail(){
     const [endNumPhoto, setEndNumPhoto]=useState(postPerPagePhoto);
     const [numberOfPagePhoto, setNumberOfPagePhoto]=useState(Math.ceil(allAddresses.length/postPerPagePhoto))
 
+    const [currentNumInput, setCurrentNumInput]=useState(-1);
+
     const {id}=useParams();
     const user=AuthService.getCurrentUser();
     const [idPrev, setIdPrev]=useState(parseInt(id)-1);
@@ -53,6 +59,7 @@ function ChoreoDetail(){
                 setDescription(res.data.description)
                 setSkills(res.data.skills)
                 setNation(res.data.nation)
+                setMusics(res.data.musics)
                 setProfileAddress(res.data.profileAddress)
                 console.log(res.data)
                 setLoadComplete(true)
@@ -63,6 +70,13 @@ function ChoreoDetail(){
                 setNoData(true)
                 console.log(noData)
             })
+    }
+    const loadAllMusics=()=>{
+        axios.get("http://localhost:8080/musics", {headers:authHeader()})
+            .then(res=>
+                setAllMusics(res.data)
+            )
+            .catch(err=>console.log(err))
     }
     const loadSwimsuits=()=>{
         axios.get(`http://localhost:8080/choreos/${id}/swimsuits`, {headers:authHeader()})
@@ -154,9 +168,19 @@ function ChoreoDetail(){
     //const pageRange=()=>{
     //    allSwimsuits.length/
     //}
+    const loadAddress=(addressId)=>{
+        axios.get(`http://localhost:8080/addresses/${addressId}`, {headers:authHeader()})
+            .then(res=>{
+                //setAddress(res.data)
+                setAddressURL(res.data.url)
+
+            })
+            .catch(err=>console.log(err))
+    }
     useEffect(()=>{
         loadChoreo();
         loadPeople();
+        loadAllMusics();
         loadAllPeople();
         loadAllNations();
         loadRoutines();
@@ -164,9 +188,10 @@ function ChoreoDetail(){
         loadAllAddresses();
         loadSwimsuits();
         loadAllSwimsuits();
+        loadAddress(addressId)
     },[allSwimsuits.length, numberOfPage, startNum, endNum, currentPage,
         allAddresses.length, numberOfPagePhoto, startNumPhoto, endNumPhoto, currentPagePhoto,
-        idPrev, idNext])
+        idPrev, idNext, currentNumInput, addressId])
 
     const addPerson=(personId)=>{
         axios.put(`http://localhost:8080/choreos/${id}/addPerson/${personId}`,{}, {headers:authHeader()})
@@ -199,8 +224,8 @@ function ChoreoDetail(){
         axios.put(`http://localhost:8080/choreos/${id}/addAddress/${addressId}`,{}, {headers:authHeader()})
             .then(res=>{
                 console.log("Address has been added!")
-                window.location.reload();
-                navigate(`/choreos/${id}`)
+                //window.location.reload();
+                //navigate(`/choreos/${id}`)
             })
             .catch(err=>console.log(err))
     }
@@ -249,6 +274,23 @@ function ChoreoDetail(){
             })
             .catch(err=>console.log(err))
     }
+    const addMusic=(musicId)=>{
+        axios.put(`http://localhost:8080/choreos/${id}/addMusic/${musicId}`,{}, {headers:authHeader()})
+            .then(res=>{
+                window.location.reload();
+                navigate(`/choreos/${id}`)}    
+            )
+            .catch(err=>console.log(err))
+    }
+    const removeMusic=(musicId)=>{
+        axios.put(`http://localhost:8080/choreos/${id}/removeMusic/${musicId}`,{}, {headers:authHeader()})
+            .then(res=>{
+                window.location.reload();
+                navigate(`/choreos/${id}`)}    
+            )
+            .catch(err=>console.log(err))
+    }
+
     const prevPage=(e)=>{
         e.preventDefault();
         //setIdPrev(parseInt(idPrev)-1)
@@ -264,6 +306,13 @@ function ChoreoDetail(){
         //window.location.reload();
     }
 
+    const changeCurrentPage=(e)=>{
+        e.preventDefault();
+        setCurrentPagePhoto(currentNumInput);
+        setStartNumPhoto(((currentNumInput-1)*postPerPagePhoto)+1)
+        setEndNumPhoto(currentNumInput*postPerPagePhoto)
+    }
+
     const btnFunc1=()=>{
         console.log("1!")
         document.getElementById("btn1").classList.remove("btnDeactivated");
@@ -274,6 +323,11 @@ function ChoreoDetail(){
         console.log("2!")
         document.getElementById("btn2").classList.remove("btnDeactivated");
         document.getElementById("btn1").classList.add("btnDeactivated");
+    }
+
+    const imageClick=(addressId)=>{
+        setAddressId(addressId);
+        console.log(addressId);
     }
     
     return(
@@ -290,79 +344,168 @@ function ChoreoDetail(){
 
 
                     <div className="profile_grid1">
-                    <h2>{name} (Id: {id})</h2>   
-                        <div className="labels"> 
-                        <div className="row2">
-                            <span className="value">
-                                {
-                                    profileAddress!=null?
-                                    <><img src={`http://localhost:8080/files/${profileAddress.url}`} style={{width:"300px"}}/>
+                        <h2>{name} (Id: {id})</h2>   
+                        <div className="labels">
+
+                        <div className="create-your-own-wrapper">
+                            <div style={{flex:"1"}}>
+                                <div className="row2FlexChildPortrait">
+                                    <span className="value">
                                         {
-                                            user && user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeAddressProfile(profileAddress.id)}>x</button>
-                                            :<></>
+                                            addressId!=0?
+                                            <div style={{border:"1px solid", padding:"5px"}}>
+                                                <img src={`http://localhost:8080/files/${addressURL}`} style={{maxWidth:"500px",minWidth:"400px"}}/>
+                                            </div>:
+                                            <>
+                                            {
+                                                profileAddress!=null?
+                                                <><img src={`http://localhost:8080/files/${profileAddress.url}`} style={{width:"400px"}}/>
+                                                    {
+                                                        user && user.roles.includes("ROLE_ADMIN")?
+                                                        <button className="marginLeft" onClick={()=>removeAddressProfile(profileAddress.id)}>x</button>
+                                                        :<></>
+                                                    }
+                                                </>:
+                                                <>Null</>
+                                            }
+                                            </>
                                         }
-                                    </>:
-                                    <>Null</>
-                                }
-                            </span>
-                        </div>
+                                    </span>
+                                </div>
 
-                        <div className="row2">
-                            <span className="label">Nation: </span>
-                            {
-                                nation?
-                                <span className="value">    
-                                    {nation.name}
-                                </span>:
-                                <></>
-                            }
-                        </div>
-                        <div className="row2">
-                            <span className="label">Description: </span>
-                            <span className="value">{description}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Skills: </span>
-                            <span className="value">{skills}</span>
-                        </div>
-                        
-                        <div className="row2">
-                            <span className="label2">Routines:</span>
-                            <ul className="ultest2">
-                                {   
-                                    routines.length!=0?
-                                    routines.map((rou, i)=>(
-                                        <li key={i}>
-                                            <Link to={`/routines/${rou.id}`}>
-                                                {rou.name}
-                                            </Link>
-                                        </li>
-                                    )):
-                                    <>Null</>
-                                }
-                            </ul>
-                        </div>
-                    
-                        <div className="row2">
-                            <span className="label2">Swimsuits:</span>
-                        </div> 
-                        <div className="row">   
-                            <div style={{display:"flex", flexWrap:"wrap"}}>
-                            {   
-                                swimsuits?
-                                swimsuits.map((s, i)=>(
-                                    <div key={i} style={{display:"block", padding:"2px", border:"1px solid"}}>
-                                        <Link to={`/swimsuitDetails/${s.id}`}>
-                                            <img src={`http://localhost:8080/files/${s.swimsuitProfilePic.url}`} style={{height:"150px"}}/>
-                                        </Link>
+                                <div className="row2FlexChildAlt">
+                                {
+                                    addresses.length!=0?
+                                    <div style={{display:"flex", flexWrap:"wrap"}}>
+                                    {
+                                        addresses.map((a, i)=>(    
+                                           
+                                            <div key={i} className="photoFrame_Small">
+                                                <div>
+                                                    <img src={`http://localhost:8080/files/${a.url}`} style={{height:"45px", padding: "5px", margin:"auto", display:"block"}}
+                                                        onClick={()=>imageClick(a.id)}
+                                                    />
+                                                    
+                                                </div>
+                                                <div style={{display:"flex"}}>
+                                                    <Link style={{border:"1px solid", display:"block", margin:"center",padding:"5px", backgroundColor:"rgba(240, 240, 240)"}} to={`/images/${a.url}`}>Link</Link>
+                                                    <button onClick={()=>removeAddress(a.id)}>x</button>
+                                                </div>
+                                            </div>
+                                                
+                                                  
+                                            
+                                        ))
+                                    }  
                                     </div>
-                                )):
-                                <>null</>
-                            }</div>
-                        </div>
-                    
+                                    :<>Image List is Empty</>
+                                } 
+                                </div>
+                            </div>
 
+                            <div style={{flex:"1", backgroundColor:"white"}}>
+                                <div className="row2FlexChild">
+                                    <span className="label">Nation: </span>
+                                    {
+                                        nation?
+                                        <span className="value">    
+                                            {nation.name}
+                                        </span>:
+                                        <></>
+                                    }
+                                </div>
+                                
+                                <div className="row2FlexChild">
+                                    <span className="label">Routines:</span>
+                                    <ul className="ultest2">
+                                        {   
+                                            routines.length!=0?
+                                            routines.map((rou, i)=>(
+                                                <li key={i}>
+                                                    <Link to={`/routines/${rou.id}`}>
+                                                        {rou.name}
+                                                    </Link>
+                                                </li>
+                                            )):
+                                            <>Null</>
+                                        }
+                                    </ul>
+                                </div>
+
+
+                                <div className="row2FlexChild">
+                                    <span className="label">Athletes:</span>
+                                        <ul className="ultest2">
+                                        {   
+                                            people?
+                                            people.map((p, i)=>(
+
+                                                <li key={i}>
+                                                    {/*
+                                                        <img src={`http://localhost:8080/files/${p.profilePicAlt}`} style={{height:"50px"}}/>
+                                                    */}
+                                                    
+                                                    <Link to={`/people/${p.id}`}>{p.name}</Link>
+                                                    {
+                                                        user && user.roles.includes("ROLE_ADMIN")?
+                                                        <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
+                                                        :<></>
+                                                    } 
+                                                </li>
+                                            ))
+                                            :<>null</>
+                                        }</ul>
+                                </div>
+
+                                <div className="row2FlexChild">
+                                    <span className="label">Music List:</span>
+                                    <ul className="ultest2">
+                                    {   
+                                        musics?
+                                        musics.map((music, i)=>(
+                                            <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <button className="marginLeft" onClick={()=>removeMusic(music.id)}>x</button>
+                                                    :<></>
+                                                }
+                                            </li> 
+                                        )):
+                                        <>null</>
+                                    }
+                                    </ul>
+                                </div>
+                                
+                                
+
+                                <div className="row2FlexChild">
+                                    <span className="label2">Swimsuits:</span>
+                                </div> 
+                                <div className="row2FlexChild">   
+                                    
+                                    <div style={{display:"flex", flexWrap:"wrap"}}>
+                                    {   
+                                        swimsuits?
+                                        swimsuits.map((s, i)=>(
+                                            <div key={i} style={{display:"block", padding:"2px", border:"1px solid"}}>
+                                                <Link to={`/swimsuitDetails/${s.id}`}>
+                                                    <img src={`http://localhost:8080/files/${s.swimsuitProfilePic.url}`} style={{height:"150px"}}/>
+                                                </Link>
+                                            </div>
+                                        )):
+                                        <>null</>
+                                    }</div>
+                                </div>
+
+                                <div className="row2FlexChild">
+                                    <span className="value">{description}</span>
+                                </div>
+                            </div>
+                        </div>                
+
+                        
+                    
+                        {/*}
                         <div className="row2">
                             <span className="label2">A.Photos:</span>  
                         </div>
@@ -385,25 +528,9 @@ function ChoreoDetail(){
                                 }
                             </div>
                         </div>
-
+                        */}
                                     
-                        <div className="row2">
-                            <span className="label2">Athletes:</span>
-                                <ul className="ultest2">
-                                {   
-                                    people?
-                                    people.map((p, i)=>(
-                                        <li key={i}><img src={`http://localhost:8080/files/${p.profilePicAlt}`} style={{height:"100px"}}/><Link to={`/people/${p.id}`}>{p.name}</Link>
-                                            {
-                                                user && user.roles.includes("ROLE_ADMIN")?
-                                                <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
-                                                :<></>
-                                            } 
-                                        </li>
-                                    ))
-                                    :<>null</>
-                                }</ul>
-                        </div>
+                        
                     </div>
 
                     </div>
@@ -438,32 +565,14 @@ function ChoreoDetail(){
                                     </div>
                                 </>
                             }
-                            
                         </div>
 
                         <div className="profile_grid1">
-                            <div className="row2">
-                                <span className="label">All Swimsuits:</span>  
-                            </div>
+                            <h2>All Swimsuits</h2>
                             <div className="rowTable">
-                            <div>Page:{currentPage} of {numberOfPage}</div>
-                            <div>Range:{startNum} - {endNum}</div>
                             
-                            {
-                                currentPage!=1?
-                                <button onClick={()=>prevPageSwimsuit()}>prev</button>
-                                :<button disabled>prev</button>
-                            }
-                            {
-                                currentPage!=numberOfPage?
-                                <button onClick={()=>nextPageSwimsuit()}>next</button>
-                                :<button disabled>next</button>
-                            }
-
-
                             {   
                                 allSwimsuits.length!=0?
-                                
                                 <div style={{display:"flex", flexWrap:"wrap", margin:"auto"}}>
                                     {
                                         allSwimsuits.slice(startNum-1, endNum).map((as, i)=>(           
@@ -501,6 +610,37 @@ function ChoreoDetail(){
                         </div>    
                     </div>       
 
+                    <div className="profile_grid1">
+                                <h2>All Musics</h2>
+                                <div className="labelsPost">
+                                    <div className="rowTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allMusics.map((m, i)=>(
+                                                <tr key={i}>
+                                                    <td>{m.id}</td>
+                                                    <td><Link to={`/musics/${m.id}`}>{m.name}</Link></td>
+                                                    <td>
+                                                        <button onClick={()=>addMusic(m.id)}>Add Music</button>
+                                                        
+                                                    </td>
+                                                </tr>
+                                                ))
+                                            }
+                                            
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>     
+                        </div>
 
                     <div className="profile_grid1">
                         <h2>All People</h2>
@@ -538,11 +678,18 @@ function ChoreoDetail(){
                         </div> 
                     
                         <div className="profile_grid1">
-                        <h2>All Photos</h2>
+                            <h2>All Photos</h2>
                             <div className="labels">
                                 <div className="rowTable">
                                 <div style={{display:"flex", justifyContent:"space-evenly"}}>
-                                    <div>Page:{currentPagePhoto} of {numberOfPagePhoto}</div>
+                                    <div>Page:
+                                        <form onSubmit={changeCurrentPage}>
+                                            <div>
+                                                <input type="number" style={{width:"3em"}} onChange={(e)=>setCurrentNumInput(e.target.value)} placeholder={currentPagePhoto}/>
+                                                <input type="submit" id="submitbtn"/>
+                                            </div>
+                                        </form>
+                                        of {numberOfPagePhoto}</div>
                                     <div>Range:{startNumPhoto} - {endNumPhoto}</div>
                                 </div>
                                 

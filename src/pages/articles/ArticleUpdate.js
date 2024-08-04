@@ -60,7 +60,7 @@ function ArticleUpdate(){
                                 <label className="labelPost">Date:</label>
                                 <input type="date" onChange={(e)=>setDate(e.target.value)} value={date}/>
                             </div>
-                            <div className="rowTextArea">
+                            <div className="row2">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="4" cols="50" onChange={(e)=>setDescription(e.target.value)} value={description}/>
                             </div>

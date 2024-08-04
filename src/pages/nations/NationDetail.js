@@ -46,84 +46,85 @@ function NationDetail(){
         <>
             <div className="profile_wrap2">
             {
-                    loadComplete!=true?
-                    <><h2>Now Loading</h2>
-                    </>
-                    :<>
-                    {noData!=true?
-                <>
-                <div className="profile_grid1">
-                    <h2>Nation: <strong>{name}</strong></h2>
-                    <div className="labels">
-                        <div className="row2">
-                            <span className="label">Id: </span>
-                            <span className="value">{id}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Name: </span>
-                            <span className="value">{name}</span>
-                        </div>
-                    </div>
-                    <div className="buttonsWrapDetail">
-                        {
-                            user && user.roles.includes("ROLE_ADMIN")?
-                            <>
-                            <div className="postDetail">
-                                <Link className="link" to="/nations/create">Post</Link>
+                loadComplete!=true?
+                <><h2>Now Loading</h2>
+                </>
+                :<>
+                {
+                    noData!=true?
+                    <>
+                        <div className="profile_grid1">
+                            <h2>Nation: <strong>{name}</strong></h2>
+                            <div className="labels">
+                                <div className="row2">
+                                    <span className="label">Id: </span>
+                                    <span className="value">{id}</span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Name: </span>
+                                    <span className="value">{name}</span>
+                                </div>
                             </div>
-
-                            <div style={{display:"flex"}}>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/nations">Back to List</Link>  
-                                </div>
-                                <div className="backToDetail">
-                                    <Link className="link" to={`/nations/${id}/update`}>Update</Link>
-                                </div>
-                                
-                            </div>    
-                            </>:
-                            <>
-                                <div>
-                                    <div className="backToDetail">
-                                        <Link className="link" to="/nations">Back to List</Link>  
+                            <div className="buttonsWrapDetail">
+                                {
+                                    user && user.roles.includes("ROLE_ADMIN")?
+                                    <>
+                                    <div className="postDetail">
+                                        <Link className="link" to="/nations/create">Post</Link>
                                     </div>
-                                </div>
-                            </>
-                        }
-                        
-                        
-                    </div>
-                </div>
 
-                <div className="profile_grid1">
-                    <h2>People For Nation(ref)</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        people.map((p, i)=>(
-                                        <tr key={i}>
-                                            <td>{p.id}</td>
-                                            <td><Link to={`/people/${p.id}`}>{p.name}</Link></td>
-                                            
-                                        </tr>
-                                        ))}  
-                                </tbody>
-                            </table>
+                                    <div style={{display:"flex"}}>
+                                        <div className="backToDetail">
+                                            <Link className="link" to="/nations">Back to List</Link>  
+                                        </div>
+                                        <div className="backToDetail">
+                                            <Link className="link" to={`/nations/${id}/update`}>Update</Link>
+                                        </div>
+                                        
+                                    </div>    
+                                    </>:
+                                    <>
+                                        <div>
+                                            <div className="backToDetail">
+                                                <Link className="link" to="/nations">Back to List</Link>  
+                                            </div>
+                                        </div>
+                                    </>
+                                }
+                                
+                                
                             </div>
                         </div>
-                    </div>
-                    </> 
-                :<h2>No Records</h2>
-                }
+
+                        <div className="profile_grid1">
+                            <h2>People For Nation(ref)</h2>
+                            <div className="labelsPost">
+                                <div className="rowTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                people.map((p, i)=>(
+                                                <tr key={i}>
+                                                    <td>{p.id}</td>
+                                                    <td><Link to={`/people/${p.id}`}>{p.name}</Link></td>
+                                                    
+                                                </tr>
+                                                ))}  
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        </> 
+                    :<h2>No Records</h2>
+                    }
                 </>
                 }
             </div>    

@@ -163,7 +163,7 @@ function BroadcastDetail(){
                                 </div>
                                 
                                 <div className="row2">
-                                    <span className="label2">People:</span>
+                                    <span className="label">People:</span>
                                     <ul className="ultest2">
                                     {   
                                         people.length!=0?
@@ -184,9 +184,9 @@ function BroadcastDetail(){
                                 </div>
                                 
                                 <div className="row2">    
-                                    <span className="label2">Tags:</span>
-                                    <div className="ultest2">
-                                        <ul>
+                                    <span className="label">Tags:</span>
+                                    <div>
+                                        <ul className="ultest2">
                                             <li style={{verticalAlign:"top"}}>
                                                 {
                                                     user && user.roles.includes("ROLE_ADMIN")?

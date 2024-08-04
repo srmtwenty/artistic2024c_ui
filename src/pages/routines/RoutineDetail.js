@@ -7,6 +7,7 @@ import AuthService from '../../services/auth.service';
 
 function RoutineDetail(){
     const [name, setName]=useState("")
+    const [engName, setEngName]=useState("")
     const [description, setDescription]=useState("")
     const [genre, setGenre]=useState(0);
     const [type, setType]=useState(0);
@@ -50,6 +51,7 @@ function RoutineDetail(){
             .then(res=>{
                 console.log(res.data)
                 setName(res.data.name)
+                setEngName(res.data.engName)
                 setDescription(res.data.description)
                 setGenre(res.data.genre)
                 setType(res.data.type)
@@ -278,353 +280,292 @@ function RoutineDetail(){
         <>
             <div className="profile_wrap2">
             {
-                    loadComplete!=true?
-                    <><h2>Now Loading</h2>
-                    </>
-                    :<>
-            {noData!=true?
-                <>
-                <div className="profile_grid1">
-                    <h2><strong>{name}(id: {id})</strong></h2>
-                    <div className="labels">
-                        
-                        <div className="row2">
-                            <span className="label">Url: </span>
-                            <span className="value">{url}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Comp: </span>
-                            {
-                                competition?
-                                <span className="value"><Link to={`/competitions/${competition.id}`}>{competition.name}</Link>
+                loadComplete!=true?
+                <><h2>Now Loading</h2></>
+                :<>
+                {
+                    noData!=true?
+                    <>
+                        <div className="profile_grid1">
+                            <h2><strong>{name}(id: {id})</strong></h2>
+                            <div className="labels">
+                                
+                                
+                                <div className="row2">
+                                    <span className="label">Comp: </span>
+                                    {
+                                        competition?
+                                        <span className="value"><Link to={`/competitions/${competition.id}`}>{competition.name}</Link>
+                                        {
+                                            user && user.roles.includes("ROLE_ADMIN")?
+                                            <button className="marginLeft" onClick={()=>removeCompetition(competition.id)}>x</button>:
+                                            <></>
+                                        }
+                                        </span>
+                                        :<>null</>
+                                    }
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Routine: </span>
+                                    <span className="value">{genre} {type}</span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">N. Team:</span>
+                                    <span className="value">
+                                    {   
+                                        nationalTeam?
+                                        <><Link to={`/nationalTeams/${nationalTeam.id}`}>{nationalTeam.name}</Link>
+                                            {
+                                                user && user.roles.includes("ROLE_ADMIN")?
+                                                <button className="marginLeft" onClick={()=>removeNationalTeam(nationalTeam.id)}>x</button>
+                                                :<></>
+                                            }
+                                        </>:
+                                        <>Null</>
+                            
+                                    }</span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Choreo.:</span>
+                                    <span className="value">
+                                    {   
+                                        choreo?
+                                        <><Link to={`/choreos/${choreo.id}`}>{choreo.name}</Link>
+                                            {
+                                                user && user.roles.includes("ROLE_ADMIN")?
+                                                <button className="marginLeft" onClick={()=>removeChoreo(choreo.id)}>x</button>
+                                                :<></>
+                                            }       
+                                        </>:
+                                        <>Null</>
+                                    }</span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Rank: </span>
+                                    <span className="value">{rank}</span>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Date: </span>
+                                    <span className="value">{date.toLocaleString().split(',')[0]}</span>
+                                </div>
+                                
+                                <div className="row2">
+                                    <span className="label">Music List:</span>
+                                    <ul className="ultest2">
+                                    {   
+                                        musics?
+                                        musics.map((music, i)=>(
+                                            <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <button className="marginLeft" onClick={()=>removeMusic(music.id)}>x</button>
+                                                    :<></>
+                                                }
+                                            </li> 
+                                        )):
+                                        <>null</>
+                                    }
+                                    </ul>
+                                </div>
+
+                                <div className="row2">
+                                    <span className="label">Athletes:</span>
+                                    <ul className="ultest2">
+                                    {   
+                                        swimmers?
+                                        swimmers.map((swimmer, i)=>(
+                                            <li key={i}><Link to={`/people/${swimmer.id}`}>{swimmer.name}/{swimmer.engName}</Link>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <button className="marginLeft" onClick={()=>removeSwimmer(swimmer.id)}>x</button>
+                                                    :<></>
+                                                }
+                                                
+                                            
+                                            </li>
+                                        )):
+                                        <>null</>
+                                    }</ul>
+                                </div>
+                                <div className="row2">
+                                    <span className="label">Coaches:</span>
+                                    <ul className="ultest2">
+                                    {   
+                                        coaches?
+                                        coaches.map((coach, i)=>(
+                                            <li key={i}><Link to={`/people/${coach.id}`}>{coach.name}/
+                                                {
+                                                    coach.engName?
+                                                    <>{coach.engName}</>
+                                                    :<></>
+                                                }
+                                                </Link>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <button className="marginLeft" onClick={()=>removeCoach(coach.id)}>x</button>
+                                                    :<></>
+                                                }
+                                            </li>
+                                        )):
+                                        <>null</>
+                                    }</ul>
+                                </div>
+
+
+                                <div className="row2">
+                                    <span className="label">Swimsuit:</span>
+                                    <span className="value">
+                                    {   
+                                        swimsuitDetail?
+                                        <>
+                                            <div className="rowTable">
+                                                <Link to={`/swimsuitDetails/${swimsuitDetail.id}`}>
+                                                    <img style={{height:"200px"}} src={`http://localhost:8080/files/${swimsuitDetail.swimsuitProfilePic.url}`}/>
+                                                    <div style={{fontSize:"10px"}}>
+                                                        {swimsuitDetail.name}
+                                                    </div>
+                                                </Link>
+                                                {
+                                                    user && user.roles.includes("ROLE_ADMIN")?
+                                                    <button className="marginLeft" onClick={()=>removeSwimsuit(swimsuitDetail.id)}>x</button>
+                                                    :<></>
+                                                }
+                                            </div>
+                                        </>:
+                                        <>Null</>
+                            
+                                    }</span>
+                                </div>
+
+                                
+
+
+                            <div className="row2">
+                                <span className="label2">Photos:</span>
+                            </div> 
+                             
+                            <div className="row">   
+                                <div style={{display:"flex", flexWrap:"wrap"}}>
+                                {   
+                                    addresses?
+                                    addresses.map((a, i)=>(
+                                        <div key={i} style={{display:"block", padding:"2px", border:"1px solid"}}>
+                                            <Link to={`/addresses/${a.id}`}>
+                                                <img src={`http://localhost:8080/files/${a.url}`} style={{height:"150px"}}/>
+                                            </Link>
+                                        </div>
+                                    )):
+                                    <>null</>
+                                }</div>
+                            </div>
+                            <div className="row2">
+                                    <p>{description}</p> 
+                                </div> 
+                            </div>
+                            <div className="buttonsWrapDetail">
                                 {
                                     user && user.roles.includes("ROLE_ADMIN")?
-                                    <button className="marginLeft" onClick={()=>removeCompetition(competition.id)}>x</button>:
-                                    <></>
-                                }
-                                </span>
-                                :<>null</>
-                            }
-                        </div>
-                        <div className="row2">
-                            <span className="label">Routine: </span>
-                            <span className="value">{genre} {type}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">N. Team:</span>
-                            <span className="value">
-                            {   
-                                nationalTeam?
-                                <><Link to={`/nationalTeams/${nationalTeam.id}`}>{nationalTeam.name}</Link>
-                                    {
-                                        user && user.roles.includes("ROLE_ADMIN")?
-                                        <button className="marginLeft" onClick={()=>removeNationalTeam(nationalTeam.id)}>x</button>
-                                        :<></>
-                                    }
-                                    
-                                </>:
-                                <>Null</>
-                      
-                            }</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Choreo.:</span>
-                            <span className="value">
-                            {   
-                                choreo?
-                                <><Link to={`/choreos/${choreo.id}`}>{choreo.name}</Link>
-                                    {
-                                        user && user.roles.includes("ROLE_ADMIN")?
-                                        <button className="marginLeft" onClick={()=>removeChoreo(choreo.id)}>x</button>
-                                        :<></>
-                                    }
-                                    
-                                </>:
-                                <>Null</>
-                      
-                            }</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Rank: </span>
-                            <span className="value">{rank}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Date: </span>
-                            <span className="value">{date.toLocaleString().split(',')[0]}</span>
-                        </div>
-                        
-                        <div className="row2">
-                            <span className="label2">Music List:</span>
-                            <ul className="ultest2">
-                            {   
-                                musics?
-                                musics.map((music, i)=>(
-                                    <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link>
-                                        {
-                                            user && user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeMusic(music.id)}>x</button>
-                                            :<></>
-                                        }
-                                    </li> 
-                                )):
-                                <>null</>
-                            }
-                            </ul>
-                        </div>
-
-
-                        
-                        <div className="row2">
-                            <span className="label2">Athletes:</span>
-                            <ul className="ultest2">
-                            {   
-                                swimmers?
-                                swimmers.map((swimmer, i)=>(
-                                    <li key={i}><Link to={`/people/${swimmer.id}`}>{swimmer.name}</Link>
-                                        {
-                                            user && user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeSwimmer(swimmer.id)}>x</button>
-                                            :<></>
-                                        }
-                                        
-                                    
-                                    </li>
-                                )):
-                                <>null</>
-                            }</ul>
-                        </div>
-                        <div className="row2">
-                            <span className="label2">Coaches:</span>
-                            <ul className="ultest2">
-                            {   
-                                coaches?
-                                coaches.map((coach, i)=>(
-                                    <li key={i}><Link to={`/people/${coach.id}`}>{coach.name}</Link>
-                                        {
-                                            user && user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeCoach(coach.id)}>x</button>
-                                            :<></>
-                                        }
-                                    </li>
-                                )):
-                                <>null</>
-                            }</ul>
-                        </div>
-                        
-                        <div className="row2">
-                            <p>{description}</p> 
-                        </div>  
-
-
-                        <div className="row2">
-                            <span className="label">Swimsuit:</span>
-                            <span className="value">
-                            {   
-                                swimsuitDetail?
-                                <>
-                                    <div className="rowTable">
-                                        <Link to={`/swimsuitDetails/${swimsuitDetail.id}`}>
-                                            <img src={`http://localhost:8080/files/${swimsuitDetail.swimsuitProfilePic.url}`}/>
-                                            <div>
-                                                {swimsuitDetail.name}
-                                            </div>
-                                        </Link>
-                                        {
-                                            user && user.roles.includes("ROLE_ADMIN")?
-                                            <button className="marginLeft" onClick={()=>removeSwimsuit(swimsuitDetail.id)}>x</button>
-                                            :<></>
-                                        }
+                                    <>
+                                    <div className="postDetail">
+                                        <Link className="link" to="/routines/create">Post</Link>  
                                     </div>
-                                </>:
-                                <>Null</>
-                      
-                            }</span>
+                                    <div style={{display:"flex"}}>
+                                        <div className="backToDetail">
+                                            <Link className="link" to="/routines">Back to List</Link> 
+                                        </div>
+                                        <div className="backToDetail">
+                                            <Link className="link" to={`/routines/${id}/update`}>Update</Link>  
+                                        </div>
+                                        
+                                    </div>
+                                    </>:
+                                    <>
+                                        <div className="backToDetail">
+                                            <Link className="link" to="/routines">Back to List</Link> 
+                                        </div>
+                                    </>
+                                }
+                                
+                            </div>    
                         </div>
+                        
 
-
-                    <div className="row2">
-                        <span className="label2">Addresses:</span>
-                    </div> 
-                    
-                    <div className="row">   
-                        <div style={{display:"flex", flexWrap:"wrap"}}>
-                        {   
-                            addresses?
-                            addresses.map((a, i)=>(
-                                <div key={i} style={{display:"block", padding:"2px", border:"1px solid"}}>
-                                    <Link to={`/addresses/${a.id}`}>
-                                        <img src={`http://localhost:8080/files/${a.url}`} style={{height:"150px"}}/>
-                                    </Link>
-                                </div>
-                            )):
-                            <>null</>
-                        }</div>
-                    </div>
-                    </div>
-                    <div className="buttonsWrapDetail">
                         {
                             user && user.roles.includes("ROLE_ADMIN")?
                             <>
-                            <div className="postDetail">
-                                <Link className="link" to="/routines/create">Post</Link>  
-                            </div>
-                            <div style={{display:"flex"}}>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/routines">Back to List</Link> 
-                                </div>
-                                <div className="backToDetail">
-                                    <Link className="link" to={`/routines/${id}/update`}>Update</Link>  
-                                </div>
-                                
-                            </div>
-                            </>:
-                            <>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/routines">Back to List</Link> 
-                                </div>
-                            </>
-                        }
-                        
-                    </div>    
-                </div>
-                
-
-                {
-                    user && user.roles.includes("ROLE_ADMIN")?
-                    <>
-                    <div className="profile_grid1">
-                        <h2>All Musics</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allMusics.map((m, i)=>(
-                                        <tr key={i}>
-                                            <td>{m.id}</td>
-                                            <td><Link to={`/musics/${m.id}`}>{m.name}</Link></td>
-                                            <td>
-                                                <button onClick={()=>addMusic(m.id)}>Add Music</button>
-                                                
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }
-                                    
-                                </tbody>
-                            </table>
-                            </div>
-                        </div>     
-                </div>
-             
-                <div className="profile_grid1">
-                    <h2>All People</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allPeople.map((p, i)=>(
-                                        <tr key={i}>
-                                            <td>{p.id}</td>
-                                            <td><Link to={`/people/${p.id}`}>{p.name}</Link></td>
-                                            <td>
-                                            <div className="tdButtonWrapper">
-                                                <div className="tdButtonContainer1">
-                                                    <button onClick={()=>addSwimmer(p.id)}>Add Athlete</button>
-                                                </div>
-                                                <div className="tdButtonContainer2">
-                                                    <button onClick={()=>addCoach(p.id)}>Add Coach</button>
-                                                </div>
-                                                
-                                            </div>  
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }
-                                    
-                                </tbody>
-                            </table>
+                            <div className="profile_grid1">
+                                <h2>All Musics</h2>
+                                <div className="labelsPost">
+                                    <div className="rowTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allMusics.map((m, i)=>(
+                                                <tr key={i}>
+                                                    <td>{m.id}</td>
+                                                    <td><Link to={`/musics/${m.id}`}>{m.name}</Link></td>
+                                                    <td>
+                                                        <button onClick={()=>addMusic(m.id)}>Add Music</button>
+                                                        
+                                                    </td>
+                                                </tr>
+                                                ))
+                                            }
+                                            
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>     
                         </div>
-                    </div>
-                </div>
-            
-                <div className="profile_grid1">
-                <h2>All Competitions</h2>
-                <div className="labelsPost">
-                    <div className="rowTable">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Id</th>
-                                <th>Name</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                allCompetitions.map((com, i)=>(
-                                <tr key={i}>
-                                    <td>{com.id}</td>
-                                    <td><Link to={`/competitions/${com.id}`}>{com.name}</Link></td>
-                                    <td>
-                                        <button onClick={()=>assignCompetition(com.id)}>Assign Competition</button>
-                                    </td>
-                                </tr>
-                                ))
-                            }
-                        </tbody>
-                    </table>
-                    </div>
-                    </div>
-                </div>
-                <div className="profile_grid1">
-                    <h2>All National Teams</h2>
-                        <div className="labelsPost">
-                            <div className="rowTable">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {
-                                        allNationalTeams.map((ant, i)=>(
-                                        <tr key={i}>
-                                            <td>{ant.id}</td>
-                                            <td>{ant.name}</td>
-                                            <td>
-                                                <button onClick={()=>assignNationalTeam(ant.id)}>Add National Team</button>   
-                                            </td>
-                                        </tr>
-                                        ))
-                                    }
-                                    
-                                </tbody>
-                            </table>
-                            </div>
-                        </div>
-                    </div>
                     
-                    <div className="profile_grid1">
-                    <h2>All Choreographic</h2>
+                        <div className="profile_grid1">
+                            <h2>All People</h2>
+                                <div className="labelsPost">
+                                    <div className="rowTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allPeople.map((p, i)=>(
+                                                <tr key={i}>
+                                                    <td>{p.id}</td>
+                                                    <td><Link to={`/people/${p.id}`}>{p.name}</Link></td>
+                                                    <td>
+                                                    <div className="tdButtonWrapper">
+                                                        <div className="tdButtonContainer1">
+                                                            <button onClick={()=>addSwimmer(p.id)}>Add Athlete</button>
+                                                        </div>
+                                                        <div className="tdButtonContainer2">
+                                                            <button onClick={()=>addCoach(p.id)}>Add Coach</button>
+                                                        </div>
+                                                        
+                                                    </div>  
+                                                    </td>
+                                                </tr>
+                                                ))
+                                            }
+                                            
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <div className="profile_grid1">
+                        <h2>All Competitions</h2>
                         <div className="labelsPost">
                             <div className="rowTable">
                             <table>
@@ -637,94 +578,154 @@ function RoutineDetail(){
                                 </thead>
                                 <tbody>
                                     {
-                                        allChoreos.map((ac, i)=>(
+                                        allCompetitions.map((com, i)=>(
                                         <tr key={i}>
-                                            <td>{ac.id}</td>
-                                            <td>{ac.name}</td>
+                                            <td>{com.id}</td>
+                                            <td><Link to={`/competitions/${com.id}`}>{com.name}</Link></td>
                                             <td>
-                                                <button onClick={()=>assignChoreo(ac.id)}>Add Choreo</button>   
+                                                <button onClick={()=>assignCompetition(com.id)}>Assign Competition</button>
                                             </td>
                                         </tr>
                                         ))
                                     }
-                                    
                                 </tbody>
                             </table>
                             </div>
+                            </div>
                         </div>
-                    </div>
-
-
-                    <div className="profile_grid1">
-                        <div className="row2">
-                            <span className="label">All Swimsuits:</span>  
-                        </div>
-                        <div className="rowTable">
-                        <div>Page:{currentPage} of {numberOfPage}</div>
-                        <div>Range:{startNum} - {endNum}</div>
-                        
-                        {
-                            currentPage!=1?
-                            <button onClick={()=>prevPageSwimsuit()}>prev</button>
-                            :<button disabled>prev</button>
-                        }
-                        {
-                            currentPage!=numberOfPage?
-                            <button onClick={()=>nextPageSwimsuit()}>next</button>
-                            :<button disabled>next</button>
-                        }
-
-
-                        {   
-                            allSwimsuits.length!=0?
+                        <div className="profile_grid1">
+                            <h2>All National Teams</h2>
+                                <div className="labelsPost">
+                                    <div className="rowTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allNationalTeams.map((ant, i)=>(
+                                                <tr key={i}>
+                                                    <td>{ant.id}</td>
+                                                    <td>{ant.name}</td>
+                                                    <td>
+                                                        <button onClick={()=>assignNationalTeam(ant.id)}>Add National Team</button>   
+                                                    </td>
+                                                </tr>
+                                                ))
+                                            }
+                                            
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
                             
-                            <div style={{display:"flex", flexWrap:"wrap", margin:"auto"}}>
-                                {
-                                    allSwimsuits.slice(startNum-1, endNum).map((as, i)=>(           
-                                        <div key={i} className="photoFrame1">
-                                            <Link to={`/swimsuitDetails/${as.id}`}>
-                                                {
-                                                    as.swimsuitProfilePic?
-                                                    <img src={`http://localhost:8080/files/${as.swimsuitProfilePic.url}`} style={{height:"110px", padding: "5px"}}/>
-                                                    :<>none</>
-                                                }
-                                            </Link>
-                                            <div style={{backgroundColor:"white"}}>
-                                                <div>{as.name}</div>
-                                                <button onClick={()=>addSwimsuit(as.id)}>Add Swimsuit</button>
-                                            </div>
-                                        </div>
-                                    ))
-                                }  
+                            <div className="profile_grid1">
+                            <h2>All Choreographic</h2>
+                                <div className="labelsPost">
+                                    <div className="rowTable">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Id</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {
+                                                allChoreos.map((ac, i)=>(
+                                                <tr key={i}>
+                                                    <td>{ac.id}</td>
+                                                    <td>{ac.name}</td>
+                                                    <td>
+                                                        <button onClick={()=>assignChoreo(ac.id)}>Add Choreo</button>   
+                                                    </td>
+                                                </tr>
+                                                ))
+                                            }
+                                            
+                                        </tbody>
+                                    </table>
+                                    </div>
+                                </div>
                             </div>
-                            :<>Null</>
-                        }
-                    
-                        <div>Page:{currentPage} of {numberOfPage}</div>
-                        <div>Range:{startNum} - {endNum}</div>
-                        
-                        {
-                            currentPage!=1?
-                            <button onClick={()=>prevPageSwimsuit()}>prev</button>
-                            :<button disabled>prev</button>
-                        }
-                        {
-                            currentPage!=numberOfPage?
-                            <button onClick={()=>nextPageSwimsuit()}>next</button>
-                            :<button disabled>next</button>
-                        }
-                    </div>    
-                </div>       
 
+
+                            <div className="profile_grid1">
+                                <div className="row2">
+                                    <span className="label">All Swimsuits:</span>  
+                                </div>
+                                <div className="rowTable">
+                                <div>Page:{currentPage} of {numberOfPage}</div>
+                                <div>Range:{startNum} - {endNum}</div>
+                                
+                                {
+                                    currentPage!=1?
+                                    <button onClick={()=>prevPageSwimsuit()}>prev</button>
+                                    :<button disabled>prev</button>
+                                }
+                                {
+                                    currentPage!=numberOfPage?
+                                    <button onClick={()=>nextPageSwimsuit()}>next</button>
+                                    :<button disabled>next</button>
+                                }
+
+
+                                {   
+                                    allSwimsuits.length!=0?
+                                    
+                                    <div style={{display:"flex", flexWrap:"wrap", margin:"auto"}}>
+                                        {
+                                            allSwimsuits.slice(startNum-1, endNum).map((as, i)=>(           
+                                                <div key={i} className="photoFrame1">
+                                                    <Link to={`/swimsuitDetails/${as.id}`}>
+                                                        {
+                                                            as.swimsuitProfilePic?
+                                                            <img src={`http://localhost:8080/files/${as.swimsuitProfilePic.url}`} style={{height:"110px", padding: "5px"}}/>
+                                                            :<>none</>
+                                                        }
+                                                    </Link>
+                                                    <div style={{backgroundColor:"white"}}>
+                                                        <div>{as.name}</div>
+                                                        <button onClick={()=>addSwimsuit(as.id)}>Add Swimsuit</button>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        }  
+                                    </div>
+                                    :<>Null</>
+                                }
+                            
+                                <div>Page:{currentPage} of {numberOfPage}</div>
+                                <div>Range:{startNum} - {endNum}</div>
+                                
+                                {
+                                    currentPage!=1?
+                                    <button onClick={()=>prevPageSwimsuit()}>prev</button>
+                                    :<button disabled>prev</button>
+                                }
+                                {
+                                    currentPage!=numberOfPage?
+                                    <button onClick={()=>nextPageSwimsuit()}>next</button>
+                                    :<button disabled>next</button>
+                                }
+                            </div>    
+                        </div>       
+
+                            </>
+                            :<></>
+                        }
+                        
+                        </> 
+                        :<h2>No Records</h2>
+                        }
                     </>
-                    :<></>
                 }
-                
-                </> 
-                :<h2>No Records</h2>
-                }
-                </>
-            }
             </div> 
         </>
     )

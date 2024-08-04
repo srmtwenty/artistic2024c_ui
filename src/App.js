@@ -90,10 +90,6 @@ import SoundtrackPost from './pages/soundtracks/SoundtrackPost';
 import SoundtrackDetail from './pages/soundtracks/SoundtrackDetail';
 import SoundtrackUpdate from './pages/soundtracks/SoundtrackUpdate';
 
-import SwimsuitList from './pages/SwimsuitList';
-import SwimsuitPost from './pages/swimsuits/SwimsuitPost';
-import SwimsuitDetail from './pages/swimsuits/SwimsuitDetail';
-import SwimsuitUpdate from './pages/swimsuits/SwimsuitUpdate';
 
 import SwimsuitDetailList from './pages/SwimsuitDetailList';
 import SwimsuitDetailPost from './pages/swimsuitDetails/SwimsuitDetailPost';
@@ -192,7 +188,7 @@ function App() {
               </NavDropdown.Item>
            
               <NavDropdown.Item href="/choreos">
-                Choreographic
+                Choreography
               </NavDropdown.Item>
             </NavDropdown>
 
@@ -342,10 +338,7 @@ function App() {
           <Route exact path="/soundtracks/:id/update" element={<SoundtrackUpdate/>}/>
 
           
-          <Route path="/swimsuits" element={<SwimsuitList/>}/>
-          <Route exact path="/swimsuits/create" element={<SwimsuitPost/>}/>
-          <Route exact path="/swimsuits/:id" element={<SwimsuitDetail/>}/>
-          <Route exact path="/swimsuits/:id/update" element={<SwimsuitUpdate/>}/>
+          
 
           <Route path="/swimsuitDetails" element={<SwimsuitDetailList/>}/>
           <Route exact path="/swimsuitDetails/create" element={<SwimsuitDetailPost/>}/>

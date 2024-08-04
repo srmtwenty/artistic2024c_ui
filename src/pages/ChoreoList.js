@@ -87,7 +87,7 @@ function ChoreoList(){
                 {
                 noData!=true?
                 <>
-                <h2 style={title}>Choreographic List</h2>
+                <h2 style={title}>Choreography List</h2>
                     <div className="rowTable">
                         <table>
                             <thead>

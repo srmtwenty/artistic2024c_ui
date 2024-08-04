@@ -13,9 +13,11 @@ function PersonList(){
     const [cont, setCont]=useState([])
     
     const [field, setField]=useState("id");
-    const [total, setTotal]=useState(-1);
+    const [total, setTotal]=useState(0);
     const [page, setPage]=useState(0);
+    
     const [rowsPerPage,setRowsPerPage]=useState(10);
+    const [totalPages, setTotalPages]=useState(Math.ceil(total/rowsPerPage));
     const [str, setStr]=useState("")
     const [searchMode, setSearchMode]=useState(false);
     const [nation, setNation]=useState(0);
@@ -33,6 +35,7 @@ function PersonList(){
             .then(res=>{
                 console.log(res.data)
                 setTotal(res.data.length)
+                setTotalPages(Math.ceil(total/rowsPerPage))
                 setLoadComplete(true)
                 console.log(loadComplete)
             })
@@ -50,7 +53,7 @@ function PersonList(){
         loadPeopleByName();
         loadPeopleByNation();
         loadAllNations();
-    },[page, field, rowsPerPage, field, str, nation])
+    },[page, field, rowsPerPage, field, str, nation, total, totalPages])
 
     const deletePerson=(id)=>{
         axios.delete(`http://localhost:8080/people/${id}/delete`, {headers:authHeader()})
@@ -110,8 +113,10 @@ function PersonList(){
     }
     const handleChangeRowsPerPage=(e)=>{
         setRowsPerPage(parseInt(e.target.value, 10));
+
         //setRowsPerPage(e.target.value);
         setPage(0);
+        setTotalPages(Math.ceil(total/rowsPerPage))
         //loadPeoplePagination();
     }
 
@@ -123,7 +128,9 @@ function PersonList(){
     const handleChangeNation=(e)=>{
         e.preventDefault()
         setNation(e.target.value)
-        
+    }
+    const pageChange=(e)=>{
+        e.preventDefault()  
     }
 
     const title={
@@ -177,7 +184,7 @@ function PersonList(){
                                     <th><Link className="table_field" to="/people" onClick={()=>handleFieldName("id")}>Id</Link></th>
                                     <th><Link className="table_field" to="/people" onClick={()=>handleFieldName("name")}>Name</Link></th>
                                     <th>Photo</th>
-                                    <th>Description</th>
+                                    
                                     <th><Link className="table_field" to="/people" onClick={()=>handleFieldName("nationality")}>Nationality</Link></th>
                                     <th>Gender</th>
                                     <th>Occupation</th>
@@ -193,23 +200,23 @@ function PersonList(){
                                     
                                     people.map((person, i)=>(
                                     <tr key={i}>
-                                        <td><Link to={`/people/${person.id}`}>{person.id}</Link></td>
-                                        <td><Link to={`/people/${person.id}`}>{person.name}</Link></td>
-                                        <td>
+                                        <td style={{padding:"5px"}}><Link to={`/people/${person.id}`}>{person.id}</Link></td>
+                                        <td style={{padding:"5px"}}><Link to={`/people/${person.id}`}>{person.name}/{person.engName}</Link></td>
+                                        <td style={{padding:"5px"}}>
                                         {
                                                 person.profilePicAlt?
-                                                <img src={`http://localhost:8080/files/${person.profilePicAlt}`} style={{width:"100px"}} />
+                                                <img src={`http://localhost:8080/files/${person.profilePicAlt}`} style={{height:"100px"}} />
                                                 :<></>
                                             }
                                         </td>
-                                        <td>{person.description}</td>
-                                        <td>{
+                                        
+                                        <td style={{padding:"10px"}}>{
                                             person.nationality?
                                             <>{person.nationality.name}</>:
                                             <>Null</>
                                             }
                                         </td>
-                                        <td>{person.gender}</td>
+                                        <td style={{padding:"10px"}}>{person.gender}</td>
                                         <td>
                                             <ul className="ultest2">
                                             {
@@ -221,7 +228,7 @@ function PersonList(){
                                             }
                                             </ul>
                                         </td>
-                                        <td>
+                                        <td style={{padding:"10px"}}>
                                             {
                                                 user && user.roles.includes("ROLE_ADMIN")?
                                                 <div className="tdButtonWrapper">
@@ -240,15 +247,16 @@ function PersonList(){
                                       
                                     ))
                                 }
-                            </tbody>:
-                            <tbody>
-                            {
+                                </tbody>:
+
+                                <tbody>
+                                {
                                 
                                 
                                 pName.map((person, i)=>(
                                 <tr key={i}>
                                     <td><Link to={`/people/${person.id}`}>{person.id}</Link></td>
-                                    <td>{person.name}</td>
+                                    <td>{person.name}/{person.engName}</td>
                                     <td>{person.description}</td>
                                     <td>{
                                         person.nationality?
@@ -291,6 +299,13 @@ function PersonList(){
                             onRowsPerPageChange={handleChangeRowsPerPage} 
                         />
                         </Stack>
+                        <div>
+                            <p>Page:{page}/{totalPages}</p>
+                            <form onSubmit={pageChange}>
+                                <input type="number" onChange={(e)=>setPage(e.target.value)} placeholder={page}/>
+                                <input type="submit" id="submitbtn"/>
+                            </form>
+                        </div>
                     </div>
                     
                 </>:

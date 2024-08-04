@@ -13,13 +13,14 @@ function CompetitionList(){
     const [field, setField]=useState("id");
     const [total, setTotal]=useState(-1);
     const [page, setPage]=useState(0);
-    const [rowsPerPage,setRowsPerPage]=useState(10);
+    const [rowsPerPage,setRowsPerPage]=useState(30);
     //const [compNationName, setCompNationName]=useState("")
-
+    
+    const user=AuthService.getCurrentUser();
     const [loadComplete, setLoadComplete]=useState(false);
     const [noData, setNoData]=useState(false);
 
-    const user=AuthService.getCurrentUser();
+    
     const loadCompetitions=()=>{
         axios.get("http://localhost:8080/competitions", {headers:authHeader()})
             .then(res=>{
@@ -71,6 +72,10 @@ function CompetitionList(){
         setRowsPerPage(parseInt(e.target.value, 10));
         setPage(0);
         //loadCompetitionsPagination();
+    }
+    const pageChange=(e)=>{
+        e.preventDefault()
+        
     }
     return(
         <>
@@ -146,17 +151,24 @@ function CompetitionList(){
                             }
                         </tbody>
                     </table>
-                <Stack alignItems="left">
-                <TablePagination 
-                    rowsPerPageOptions={[10, 25, 50]} 
-                    component="div"
-                    count={total}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage} 
-                    onRowsPerPageChange={handleChangeRowsPerPage} 
-                />
-                </Stack>
+                    <Stack alignItems="left">
+                    <TablePagination 
+                        rowsPerPageOptions={[10, 25, 50]} 
+                        component="div"
+                        count={total}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage} 
+                        onRowsPerPageChange={handleChangeRowsPerPage} 
+                    />
+                    </Stack>
+                    <div>
+                        <p>Page:{page}</p>
+                        <form onSubmit={pageChange}>
+                            <input type="number" onChange={(e)=>setPage(e.target.value)} placeholder={page}/>
+                            <input type="submit" id="submitbtn"/>
+                        </form>
+                    </div>
                 </div>
             </>:
             <h2>Competition List is Empty</h2>

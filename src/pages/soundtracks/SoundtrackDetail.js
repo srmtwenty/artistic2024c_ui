@@ -78,100 +78,95 @@ function SoundtrackDetail(){
     return(
         <>
             <div className="profile_wrap2">
-                
             {
                 loadComplete!=true?
-                <>
-                    <h2>Now Loading</h2>
-                    
-                </>
+                <><h2>Now Loading</h2></>
                 :<>
 
             
-            {noData!=true?
-                <>
-                <div className="buttonsWrapDetail">
-                        {
-                            user && user.roles.includes("ROLE_ADMIN")?
-                            <>
-                            <div className="postDetail">
-                                <Link className="link" to="/soundtracks/create">Post</Link>  
-                            </div>
-                            <div style={{display:"flex"}}>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/soundtracks">Back to List</Link> 
-                                </div>
-                                <div className="backToDetail">
-                                    <Link className="link" to={`/soundtracks/${id}/update`}>Update</Link> 
-                                </div>
-                                
-                            </div>
-                            </>
-                            :<>
-                                <div>
-                                    <div className="backToDetail">
-                                        <Link className="link" to="/soundtracks">Back to List</Link> 
-                                    </div>
-                                </div>
-                            </>
-                        }
-                        
-                    </div>  
-                <div className="profile_grid1">
-
-
-                    <h2><strong>{name}</strong> Profile</h2>
-                    <div className="labels">
-                        <div className="row2">
-                            <span className="label">Id: </span>
-                            <span className="value">{id}</span>
-                        </div>
-                        <div className="row2">
-                            <span className="label">Name: </span>
-                            <span className="value">{name}</span>
-                        </div>
-                        
-                        <div className="row2">
-                            <span className="label2">Musics(ref):</span>
-                            <ul className="ultest2">
+                {
+                    noData!=true?
+                    <>
+                        <div className="buttonsWrapDetail">
                             {
-                                musics.length!=0?
-                                musics.map((music, i)=>
-                                    <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link></li>
-                                ):
-                                <>null</>
+                                user && user.roles.includes("ROLE_ADMIN")?
+                                <>
+                                    <div className="postDetail">
+                                        <Link className="link" to="/soundtracks/create">Post</Link>  
+                                    </div>
+                                    <div style={{display:"flex"}}>
+                                        <div className="backToDetail">
+                                            <Link className="link" to="/soundtracks">Back to List</Link> 
+                                        </div>
+                                        <div className="backToDetail">
+                                            <Link className="link" to={`/soundtracks/${id}/update`}>Update</Link> 
+                                        </div>
+                                        
+                                    </div>
+                                </>
+                                :<>
+                                    <div>
+                                        <div className="backToDetail">
+                                            <Link className="link" to="/soundtracks">Back to List</Link> 
+                                        </div>
+                                    </div>
+                                </>
                             }
-                            </ul>
-                        </div>
-                        <div className="row2">
-                            {description}
-                        </div>
-                    </div>
-                      
-                </div>
-                </> 
-                :<h2>No Records</h2>
-                }
-
-                </>
-                }
-
-<div className="buttonsWrapDetail">
-                        {
-                            user && user.roles.includes("ROLE_ADMIN")?
-                            <>
-                            <div className="postDetail">
-                                <Link className="link" to="/soundtracks/create">Post</Link>  
-                            </div>
-                            <div style={{display:"flex"}}>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/soundtracks">Back to List</Link> 
+                            
+                        </div>  
+                        <div className="profile_grid1">
+                            <h2><strong>{name}</strong> Profile</h2>
+                            <div className="labels">
+                                <div className="row2">
+                                    <span className="label">Id: </span>
+                                    <span className="value">{id}</span>
                                 </div>
-                                <div className="backToDetail">
-                                    <Link className="link" to={`/soundtracks/${id}/update`}>Update</Link> 
+                                <div className="row2">
+                                    <span className="label">Name: </span>
+                                    <span className="value">{name}</span>
                                 </div>
                                 
+                                <div className="row2">
+                                    <span className="label">Musics(ref):</span>
+                                    <ul className="ultest2">
+                                    {
+                                        musics.length!=0?
+                                        musics.map((music, i)=>
+                                            <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link></li>
+                                        ):
+                                        <>null</>
+                                    }
+                                    </ul>
+                                </div>
+                                <div className="row2">
+                                    {description}
+                                </div>
                             </div>
+                            
+                        </div>
+                    </> 
+                    :<h2>No Records</h2>
+                    }
+
+                    </>
+                    }
+
+                    <div className="buttonsWrapDetail">
+                    {
+                            user && user.roles.includes("ROLE_ADMIN")?
+                            <>
+                                <div className="postDetail">
+                                    <Link className="link" to="/soundtracks/create">Post</Link>  
+                                </div>
+                                <div style={{display:"flex"}}>
+                                    <div className="backToDetail">
+                                        <Link className="link" to="/soundtracks">Back to List</Link> 
+                                    </div>
+                                    <div className="backToDetail">
+                                        <Link className="link" to={`/soundtracks/${id}/update`}>Update</Link> 
+                                    </div>
+                                    
+                                </div>
                             </>
                             :<>
                                 <div>
@@ -180,9 +175,8 @@ function SoundtrackDetail(){
                                     </div>
                                 </div>
                             </>
-                        }
-                        
-                    </div>    
+                    }       
+                </div>    
             </div>
         </>
     )

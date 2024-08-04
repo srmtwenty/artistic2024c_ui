@@ -5,6 +5,7 @@ import authHeader from '../../services/auth-header';
 
 function PersonUpdate(){
     const [name, setName]=useState("")
+    const [engName, setEngName]=useState("")
     const [description, setDescription]=useState("")
     const [gender, setGender]=useState(0)
     const [profilePicAlt, setProfilePicAlt]=useState("")
@@ -16,6 +17,7 @@ function PersonUpdate(){
             .then(res=>{
                 //console.log(res.data)
                 setName(res.data.name)
+                setEngName(res.data.engName)
                 setDescription(res.data.description)
                 setGender(res.data.gender)
                 setProfilePicAlt(res.data.profilePicAlt)
@@ -31,6 +33,7 @@ function PersonUpdate(){
         e.preventDefault()
         axios.put(`http://localhost:8080/people/${id}/update`, {
             name:name,
+            engName:engName,
             description:description,
             gender:gender,
             profilePicAlt:profilePicAlt
@@ -51,7 +54,11 @@ function PersonUpdate(){
                                 <label className="labelPost">Name:</label>
                                 <input type="text" onChange={(e)=>setName(e.target.value)} value={name}/>
                             </div>
-                            <div className="rowTextArea">
+                            <div className="row2">
+                                <label className="labelPost">Eng Name:</label>
+                                <input type="text" onChange={(e)=>setEngName(e.target.value)} value={engName}/>
+                            </div>
+                            <div className="row2">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="4" cols="50" onChange={(e)=>setDescription(e.target.value)} value={description}/>
                             </div>

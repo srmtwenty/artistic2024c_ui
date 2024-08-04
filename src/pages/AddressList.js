@@ -13,7 +13,8 @@ function AddressList(){
     const [total, setTotal]=useState(-1);
     const [page, setPage]=useState(0);
     const [rowsPerPage,setRowsPerPage]=useState(10);
-
+    const [totalPages, setTotalPages]=useState(Math.ceil(total/rowsPerPage));
+    
     const [loadComplete, setLoadComplete]=useState(false);
     const [noData, setNoData]=useState(false);
 
@@ -24,6 +25,7 @@ function AddressList(){
             .then(res=>{
                 console.log(res.data)
                 setTotal(res.data.length)
+                setTotalPages(Math.ceil(total/rowsPerPage))
                 setLoadComplete(true)
                 console.log(loadComplete)
             })
@@ -38,7 +40,7 @@ function AddressList(){
     useEffect(()=>{
         loadAddresses();
         loadAddressesPagination();
-    },[page, field, rowsPerPage, field])
+    },[page, field, rowsPerPage, field, totalPages])
 
     const deleteAddress=(id)=>{
         axios.delete(`http://localhost:8080/addresses/${id}/delete`, {headers:authHeader()})
@@ -66,10 +68,15 @@ function AddressList(){
         setPage(newPage)
         //loadArticlesPagination();
     }
+    
     const handleChangeRowsPerPage=(e)=>{
         setRowsPerPage(parseInt(e.target.value, 10));
         setPage(0);
         //loadArticlesPagination();
+    }
+
+    const pageChange=(e)=>{
+        e.preventDefault()  
     }
 
     const title={
@@ -152,6 +159,13 @@ function AddressList(){
                                 onRowsPerPageChange={handleChangeRowsPerPage} 
                             />
                             </Stack>
+                            <div>
+                                <p>Page:{page}/{totalPages}</p>
+                                <form onSubmit={pageChange}>
+                                    <input type="number" onChange={(e)=>setPage(e.target.value)} placeholder={page}/>
+                                    <input type="submit" id="submitbtn"/>
+                                </form>
+                            </div>
                     </div>
                 </>
                 :<h2>Address List is Empty</h2>

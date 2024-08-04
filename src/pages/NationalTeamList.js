@@ -55,6 +55,7 @@ function NationalTeamList(){
         axios.get(`http://localhost:8080/nationalTeams/${page}/${rowsPerPage}/${field}`, {headers:authHeader()})
             .then(res=>{   
                 setNationalTeams(res.data.content)
+                console.log(res.data)
                 //console.log(users.length)
                 //setUsers(res.data)
                 
@@ -94,6 +95,7 @@ function NationalTeamList(){
                                 <tr>
                                     <th><button onClick={()=>handleFieldName("id")}>Id</button></th>
                                     <th><button onClick={()=>handleFieldName("name")}>Name</button></th>
+                                    <th>Member Numbers</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -103,6 +105,13 @@ function NationalTeamList(){
                                     <tr key={i}>
                                         <td><Link to={`/nationalTeams/${national.id}`}>{national.id}</Link></td>
                                         <td>{national.name}</td>
+                                        <td>
+                                            {
+                                                national.members?
+                                                <>{national.members.length}</>
+                                                :<></>
+                                            }
+                                        </td>
                                         <td>
                                             {
                                                 user && user.roles.includes("ROLE_ADMIN")?
