@@ -186,6 +186,7 @@ function PersonList(){
                                     <th>Photo</th>
                                     
                                     <th><Link className="table_field" to="/people" onClick={()=>handleFieldName("nationality")}>Nationality</Link></th>
+                                    <th>Birth Year</th>
                                     <th>Gender</th>
                                     <th>Occupation</th>
                                     <th>Action</th>
@@ -216,6 +217,7 @@ function PersonList(){
                                             <>Null</>
                                             }
                                         </td>
+                                        <td>{person.birthYear}</td>
                                         <td style={{padding:"10px"}}>{person.gender}</td>
                                         <td>
                                             <ul className="ultest2">

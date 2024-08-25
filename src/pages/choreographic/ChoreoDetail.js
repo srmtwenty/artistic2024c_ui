@@ -9,6 +9,8 @@ function ChoreoDetail(){
     const [description, setDescription]=useState("")
     const [skills, setSkills]=useState("")
     const [nation, setNation]=useState(0);
+    const [nationalTeam, setNationalTeam]=useState(0)
+    const [allNationalTeams, setAllNationalTeams]=useState([])
     const [people, setPeople]=useState([])
     const [musics, setMusics]=useState([])
     const [allMusics, setAllMusics]=useState([])
@@ -58,6 +60,7 @@ function ChoreoDetail(){
                 setName(res.data.name)
                 setDescription(res.data.description)
                 setSkills(res.data.skills)
+                setNationalTeam(res.data.nationalTeam)
                 setNation(res.data.nation)
                 setMusics(res.data.musics)
                 setProfileAddress(res.data.profileAddress)
@@ -117,6 +120,13 @@ function ChoreoDetail(){
         axios.get("http://localhost:8080/nations", {headers:authHeader()})
             .then(res=>{
                 setAllNations(res.data)
+            })
+            .catch(err=>console.log(err))
+    }
+    const loadAllNationalTeams=()=>{
+        axios.get("http://localhost:8080/nationalTeams", {headers:authHeader()})
+            .then(res=>{
+                setAllNationalTeams(res.data)
             })
             .catch(err=>console.log(err))
     }
@@ -188,6 +198,7 @@ function ChoreoDetail(){
         loadAllAddresses();
         loadSwimsuits();
         loadAllSwimsuits();
+        loadAllNationalTeams();
         loadAddress(addressId)
     },[allSwimsuits.length, numberOfPage, startNum, endNum, currentPage,
         allAddresses.length, numberOfPagePhoto, startNumPhoto, endNumPhoto, currentPagePhoto,
@@ -215,6 +226,15 @@ function ChoreoDetail(){
         axios.put(`http://localhost:8080/choreos/${id}/setNation/${nationId}`, {},{headers:authHeader()})
             .then(res=>{
                 console.log("Nation has been assigned!")
+                window.location.reload();
+                navigate(`/choreos/${id}`);
+            })
+            .catch(err=>console.log(err))
+    }
+    const assignNationalTeam=(nationalTeamId)=>{
+        axios.put(`http://localhost:8080/choreos/${id}/setNationalTeam/${nationalTeamId}`, {},{headers:authHeader()})
+            .then(res=>{
+                console.log("National Team has been assigned!")
                 window.location.reload();
                 navigate(`/choreos/${id}`);
             })
@@ -342,7 +362,6 @@ function ChoreoDetail(){
                     noData!=true?
                     <>
 
-
                     <div className="profile_grid1">
                         <h2>{name} (Id: {id})</h2>   
                         <div className="labels">
@@ -354,12 +373,17 @@ function ChoreoDetail(){
                                         {
                                             addressId!=0?
                                             <div style={{border:"1px solid", padding:"5px"}}>
-                                                <img src={`http://localhost:8080/files/${addressURL}`} style={{maxWidth:"500px",minWidth:"400px"}}/>
-                                            </div>:
-                                            <>
+                                                <Link to={`/addresses/${addressId}`}>
+                                                    <img src={`http://localhost:8080/files/${addressURL}`} style={{maxWidth:"500px",minWidth:"400px"}}/>
+                                                </Link>
+                                            </div>
+                                            :<>
                                             {
                                                 profileAddress!=null?
-                                                <><img src={`http://localhost:8080/files/${profileAddress.url}`} style={{width:"400px"}}/>
+                                                <>
+                                                    <Link to={`/addresses/${profileAddress.id}`}>
+                                                        <img src={`http://localhost:8080/files/${profileAddress.url}`} style={{width:"400px"}}/>
+                                                    </Link>
                                                     {
                                                         user && user.roles.includes("ROLE_ADMIN")?
                                                         <button className="marginLeft" onClick={()=>removeAddressProfile(profileAddress.id)}>x</button>
@@ -388,13 +412,10 @@ function ChoreoDetail(){
                                                     
                                                 </div>
                                                 <div style={{display:"flex"}}>
-                                                    <Link style={{border:"1px solid", display:"block", margin:"center",padding:"5px", backgroundColor:"rgba(240, 240, 240)"}} to={`/images/${a.url}`}>Link</Link>
+                                                    {/*<Link style={{border:"1px solid", display:"block", margin:"center",padding:"5px", backgroundColor:"rgba(240, 240, 240)"}} to={`/images/${a.url}`}>Link</Link>*/}
                                                     <button onClick={()=>removeAddress(a.id)}>x</button>
                                                 </div>
                                             </div>
-                                                
-                                                  
-                                            
                                         ))
                                     }  
                                     </div>
@@ -405,11 +426,11 @@ function ChoreoDetail(){
 
                             <div style={{flex:"1", backgroundColor:"white"}}>
                                 <div className="row2FlexChild">
-                                    <span className="label">Nation: </span>
+                                    <span className="label">NationalTeam: </span>
                                     {
-                                        nation?
+                                        nationalTeam?
                                         <span className="value">    
-                                            {nation.name}
+                                            <Link to={`/nationalTeams/${nationalTeam.id}`}>{nationalTeam.name}</Link>
                                         </span>:
                                         <></>
                                     }
@@ -445,7 +466,7 @@ function ChoreoDetail(){
                                                         <img src={`http://localhost:8080/files/${p.profilePicAlt}`} style={{height:"50px"}}/>
                                                     */}
                                                     
-                                                    <Link to={`/people/${p.id}`}>{p.name}</Link>
+                                                    <Link to={`/people/${p.id}`}>{p.name}({p.birthYear})</Link>
                                                     {
                                                         user && user.roles.includes("ROLE_ADMIN")?
                                                         <button className="marginLeft" onClick={()=>removePerson(p.id)}>x</button>
@@ -746,6 +767,42 @@ function ChoreoDetail(){
                     <button id="btn2" className="deactiveBtn btnDeactivated" onClick={()=>btnFunc2()}>Deactivated admins</button>
                     </div>
 
+                    
+                    <div className="profile_grid1">
+                        <h2>All National Teams</h2>
+                            <div className="labels">
+                                <div className="rowTable">
+                                {
+                                allNationalTeams.length!=0?
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Name</th>
+                                            
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            allNationalTeams.map((ant, i)=>(
+                                            <tr key={i}>
+                                                <td>{ant.id}</td>
+                                                <td><Link to={`/nations/${ant.id}`}>{ant.name}</Link></td>                                          
+                                                <td>
+                                                    <button onClick={()=>assignNationalTeam(ant.id)}>Assign National Team</button>
+                                                </td>
+                                            </tr>
+                                            ))
+                                        }  
+                                    </tbody>
+                                </table>
+                                :<p>All National Team List is Empty</p>
+                                } 
+                                </div>
+                            </div>
+                        </div> 
+                        
 
 
                     <div className="profile_grid1">
@@ -777,8 +834,8 @@ function ChoreoDetail(){
                                             ))
                                         }  
                                     </tbody>
-                                </table>:
-                                <p>All People List is Empty</p>
+                                </table>
+                                :<p>All Nation List is Empty</p>
                                 } 
                                 </div>
                             </div>

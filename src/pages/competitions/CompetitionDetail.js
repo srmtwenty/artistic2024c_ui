@@ -88,7 +88,7 @@ function CompetitionDetail(){
                     noData!=true?
                     <>
                     <div className="profile_grid1">
-                        <h2>Comp: <strong>{name} (id: {id})</strong></h2>
+                        <h2 style={{borderBottom:"2px solid", paddingBottom:"10px", marginBottom:"30px"}}>Comp: <strong>{name} (id: {id})</strong></h2>
                         <div className="labels">
                             
                             <div className="row2">
@@ -115,7 +115,7 @@ function CompetitionDetail(){
                                     {date!=null?
                                     <>{date.toLocaleString().split(',')[0]}</>
                                     :<>???</>}
-                                    -
+                                    ~
                                     {endDate!=null?
                                     <>{endDate.toLocaleString().split(',')[0]}</>
                                     :<>???</>}
@@ -140,32 +140,36 @@ function CompetitionDetail(){
                             </div>   
                         </div>
                         
+                        <div className="buttonsWrapDetail">
+                        {
+                            user && user.roles.includes("ROLE_ADMIN")?
+                            <>
+                                <div className="postDetail">
+                                    <Link className="link" to="/competitions/create">Post Competition</Link>
+                                </div>
+                                <div style={{display:"flex"}}>
+                                    <div className="backToDetail">
+                                        <Link className="link" to={`/competitions/${id}/update`}>Edit</Link>
+                                    </div>
+                                    <div className="backToDetail">
+                                        <Link className="link" to="/competitions">Back to List</Link>  
+                                    </div>
+                                </div>           
+                            </>
+                            :<>
+                                <div>
+                                    <div className="backToDetail">
+                                        <Link className="link" to="/competitions">Back to List</Link>  
+                                    </div>
+                                </div>
+                            </>
+                        }   
+                        </div>
+
                     </div>
-                    <div className="buttonsWrapDetail">
-                    {
-                        user && user.roles.includes("ROLE_ADMIN")?
-                        <>
-                            <div className="postDetail">
-                                <Link className="link" to="/competitions/create">Post Competition</Link>
-                            </div>
-                            <div style={{display:"flex"}}>
-                                <div className="backToDetail">
-                                    <Link className="link" to={`/competitions/${id}/update`}>Update</Link>
-                                </div>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/competitions">Back to List</Link>  
-                                </div>
-                            </div>           
-                        </>
-                        :<>
-                            <div>
-                                <div className="backToDetail">
-                                    <Link className="link" to="/competitions">Back to List</Link>  
-                                </div>
-                            </div>
-                        </>
-                    }   
-                    </div>
+
+
+                    
                     
                     {
                         user && user.roles.includes("ROLE_ADMIN")?

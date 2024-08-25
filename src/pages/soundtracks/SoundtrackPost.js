@@ -30,7 +30,7 @@ function SoundtrackPost(){
                                 <label className="labelPost">Name:</label>
                                 <input type="text" onChange={(e)=>setName(e.target.value)}/>
                             </div>
-                            <div className="rowTextArea">
+                            <div className="row2">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="3" cols="40" onChange={(e)=>setDescription(e.target.value)}/>
                             </div>

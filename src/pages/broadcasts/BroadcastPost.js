@@ -45,13 +45,13 @@ function BroadcastPost(){
                                 <label className="labelPost">Date:</label>
                                 <input type="date" onChange={(e)=>setDate(e.target.value)}/>
                             </div>
-                            <div className="rowTextArea">
+                            <div className="row2">
                                 <label className="labelPost">Description:</label>
                                 <textarea rows="3" cols="40" onChange={(e)=>setDescription(e.target.value)}/>
                             </div>
                             <div className="updateButtonsWrap">
                                 <div className="updateButtonSubmit">
-                                    <input type="submit" value="Update Broadcast"/>
+                                    <input type="submit" value="Post Broadcast"/>
                                 </div>
                                
                             </div>

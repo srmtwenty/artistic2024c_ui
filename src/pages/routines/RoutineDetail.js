@@ -13,7 +13,7 @@ function RoutineDetail(){
     const [type, setType]=useState(0);
     const [rank, setRank]=useState(0);
     const [date, setDate]=useState(new Date());
-    const [musics, setMusics]=useState([])
+    //const [musics, setMusics]=useState([])
     const [swimmers, setSwimmers]=useState([])
     const [coaches, setCoaches]=useState([])
     const [competition, setCompetition]=useState(0)
@@ -57,7 +57,7 @@ function RoutineDetail(){
                 setType(res.data.type)
                 setRank(res.data.rank)
                 setDate(res.data.date)
-                setMusics(res.data.musics)
+                //setMusics(res.data.musics)
                 setSwimmers(res.data.swimmers)
                 setCoaches(res.data.coaches)
                 setCompetition(res.data.competition)
@@ -287,7 +287,7 @@ function RoutineDetail(){
                     noData!=true?
                     <>
                         <div className="profile_grid1">
-                            <h2><strong>{name}(id: {id})</strong></h2>
+                            <h2  style={{borderBottom:"2px solid", paddingBottom:"10px", marginBottom:"30px"}}><strong>{name}(id: {id})</strong></h2>
                             <div className="labels">
                                 
                                 
@@ -310,7 +310,7 @@ function RoutineDetail(){
                                     <span className="value">{genre} {type}</span>
                                 </div>
                                 <div className="row2">
-                                    <span className="label">N. Team:</span>
+                                    <span className="label">N.Team:</span>
                                     <span className="value">
                                     {   
                                         nationalTeam?
@@ -349,32 +349,16 @@ function RoutineDetail(){
                                     <span className="value">{date.toLocaleString().split(',')[0]}</span>
                                 </div>
                                 
-                                <div className="row2">
-                                    <span className="label">Music List:</span>
-                                    <ul className="ultest2">
-                                    {   
-                                        musics?
-                                        musics.map((music, i)=>(
-                                            <li key={i}><Link to={`/musics/${music.id}`}>{music.name}</Link>
-                                                {
-                                                    user && user.roles.includes("ROLE_ADMIN")?
-                                                    <button className="marginLeft" onClick={()=>removeMusic(music.id)}>x</button>
-                                                    :<></>
-                                                }
-                                            </li> 
-                                        )):
-                                        <>null</>
-                                    }
-                                    </ul>
-                                </div>
-
+                                
+                                
+                                        
                                 <div className="row2">
                                     <span className="label">Athletes:</span>
                                     <ul className="ultest2">
                                     {   
                                         swimmers?
                                         swimmers.map((swimmer, i)=>(
-                                            <li key={i}><Link to={`/people/${swimmer.id}`}>{swimmer.name}/{swimmer.engName}</Link>
+                                            <li key={i}><Link to={`/people/${swimmer.id}`}>{swimmer.name}/{swimmer.engName}({swimmer.birthYear})</Link>
                                                 {
                                                     user && user.roles.includes("ROLE_ADMIN")?
                                                     <button className="marginLeft" onClick={()=>removeSwimmer(swimmer.id)}>x</button>
@@ -413,6 +397,35 @@ function RoutineDetail(){
 
 
                                 <div className="row2">
+                                    <span className="label">Music List:</span>
+                                    
+                                    <ul className="ultest2">
+                                    {   
+                                        choreo!=null && choreo.musics.length!=0?
+                                        
+                                            choreo.musics.map((music, i)=>(
+                                            <li key={i}>
+                                                <Link to={`/musics/${music.id}`}>{music.name}</Link>
+
+                                                {/*
+                                                    music.composers?
+                                                    <>
+                                                        (composed by {music.composer.name})
+                                                    </>
+                                                    :<></>
+                                                */}
+                                            </li>         
+
+                                            ))
+                                        
+                                        :<>Null</>
+                                    }
+                                    </ul>
+                                    
+                                </div>
+
+
+                                <div className="row2">
                                     <span className="label">Swimsuit:</span>
                                     <span className="value">
                                     {   
@@ -420,7 +433,7 @@ function RoutineDetail(){
                                         <>
                                             <div className="rowTable">
                                                 <Link to={`/swimsuitDetails/${swimsuitDetail.id}`}>
-                                                    <img style={{height:"200px"}} src={`http://localhost:8080/files/${swimsuitDetail.swimsuitProfilePic.url}`}/>
+                                                    <img style={{height:"150px"}} src={`http://localhost:8080/files/${swimsuitDetail.swimsuitProfilePic.url}`}/>
                                                     <div style={{fontSize:"10px"}}>
                                                         {swimsuitDetail.name}
                                                     </div>
@@ -493,37 +506,7 @@ function RoutineDetail(){
                         {
                             user && user.roles.includes("ROLE_ADMIN")?
                             <>
-                            <div className="profile_grid1">
-                                <h2>All Musics</h2>
-                                <div className="labelsPost">
-                                    <div className="rowTable">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Id</th>
-                                                <th>Name</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                allMusics.map((m, i)=>(
-                                                <tr key={i}>
-                                                    <td>{m.id}</td>
-                                                    <td><Link to={`/musics/${m.id}`}>{m.name}</Link></td>
-                                                    <td>
-                                                        <button onClick={()=>addMusic(m.id)}>Add Music</button>
-                                                        
-                                                    </td>
-                                                </tr>
-                                                ))
-                                            }
-                                            
-                                        </tbody>
-                                    </table>
-                                    </div>
-                                </div>     
-                        </div>
+                            
                     
                         <div className="profile_grid1">
                             <h2>All People</h2>

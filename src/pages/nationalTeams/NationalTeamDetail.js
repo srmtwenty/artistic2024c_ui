@@ -11,13 +11,17 @@ function NationalTeamDetail(){
     const [members, setMembers]=useState([])
     const [routines, setRoutines]=useState([])
     
-
     const user=AuthService.getCurrentUser();
     const [allNations, setAllNations]=useState([])
     const [allPeople, setAllPeople]=useState([])
 
     const [loadComplete, setLoadComplete]=useState(false);
     const [noData, setNoData]=useState(false);
+
+    const [revealMembers, setRevealMembers]=useState(false);
+    const [revealResults, setRevealResults]=useState(false);
+    const [revealAllPeople, setRevealAllPeople]=useState(false);
+    const [revealAllNations, setRevealAllNations]=useState(false);
 
     const {id}=useParams();
     const navigate=useNavigate();
@@ -47,7 +51,7 @@ function NationalTeamDetail(){
             .catch(err=>console.log(err))
     }
     const loadAllPeople=()=>{
-        axios.get("http://localhost:8080/people", {headers:authHeader()})
+        axios.get("http://localhost:8080/people/orderByNameAsc", {headers:authHeader()})
             .then(res=>{
                 setAllPeople(res.data)
             })
@@ -95,6 +99,39 @@ function NationalTeamDetail(){
                 window.location.reload();
                 navigate(`/nationalTeams/${id}`)
             })
+    }
+
+    const handleRevealMembers=()=>{
+        if(revealMembers==false){
+            setRevealMembers(true);
+        }
+        else{
+            setRevealMembers(false);
+        }
+    }
+    const handleRevealAllPeople=()=>{
+        if(revealAllPeople==false){
+            setRevealAllPeople(true);
+        }
+        else{
+            setRevealAllPeople(false);
+        }
+    }
+    const handleRevealAllNations=()=>{
+        if(revealAllNations==false){
+            setRevealAllNations(true);
+        }
+        else{
+            setRevealAllNations(false);
+        }
+    }
+    const handleRevealResults=()=>{
+        if(revealResults==false){
+            setRevealResults(true);
+        }
+        else{
+            setRevealResults(false);
+        }
     }
 
     return(
@@ -183,8 +220,8 @@ function NationalTeamDetail(){
                                             <td>
                                                 <ul>
                                                 {
-                                                    m.occupations.map((r)=>(
-                                                    <li style={{display:"inline-block", marginRight:"10px"}}><div className="roleBorder">{r.name}</div></li> 
+                                                    m.occupations.map((r, i)=>(
+                                                    <li key={i} style={{display:"inline-block", marginRight:"10px"}}><div className="roleBorder">{r.name}</div></li> 
                                                     ))
                                                 }</ul>
                                             </td>
@@ -206,6 +243,7 @@ function NationalTeamDetail(){
                                     <thead>
                                         <tr>
                                             <th>Competition Names</th>
+                                            <th>Date</th>
                                             <th>Ranking</th>
                                         </tr>
                                     </thead>
@@ -217,7 +255,7 @@ function NationalTeamDetail(){
                                             routines.map((routine, i)=>(
                                             <tr key={i}>
                                                 
-                                                <td>
+                                                <td style={{textAlign:"left"}}>
                                                     {
                                                         routine.competition?
                                                         <Link to={`/competitions/${routine.competition.id}`}>
@@ -230,6 +268,7 @@ function NationalTeamDetail(){
                                                     </Link>
                                                     
                                                 </td>
+                                                <td>{routine.date}</td>
                                                 <td>{routine.rank}</td>
                                             </tr>    
                                             ))

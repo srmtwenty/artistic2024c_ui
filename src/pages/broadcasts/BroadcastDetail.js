@@ -42,7 +42,7 @@ function BroadcastDetail(){
             })
     }
     const loadAllPeople=()=>{
-        axios.get("http://localhost:8080/people", {headers:authHeader()})
+        axios.get("http://localhost:8080/people/orderByNameAsc", {headers:authHeader()})
             .then(res=>{
                 setAllPeople(res.data)
             })

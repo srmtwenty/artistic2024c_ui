@@ -10,6 +10,7 @@ function PersonPost(){
     const [description, setDescription]=useState("")
     const [profilePicAlt, setProfilePicAlt]=useState("")
     const [gender, setGender]=useState(0)
+    const [birthYear, setBirthYear]=useState(0)
     const [nationalityId, setNationalityId]=useState(1)
     const [allNations, setAllNations]=useState([])
     const navigate=useNavigate();
@@ -18,6 +19,7 @@ function PersonPost(){
         axios.post("http://localhost:8080/people/create", {
             name:name,
             engName:engName,
+            birthYear:birthYear,
             description:description,
             profilePicAlt:profilePicAlt,
             gender:gender,
@@ -57,6 +59,10 @@ function PersonPost(){
                             <div className="row2">
                                 <label className="labelPost">Eng Name:</label>
                                 <input type="text" onChange={(e)=>setEngName(e.target.value)}/>
+                            </div>
+                            <div className="row2">
+                                <label className="labelPost">Birth Year:</label>
+                                <input type="number" onChange={(e)=>setBirthYear(e.target.value)}/>
                             </div>
                             <div className="rowTextArea">
                                 <label className="labelPost">Description:</label>

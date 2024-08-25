@@ -10,6 +10,7 @@ function PersonDetail(){
     const [name, setName]=useState("")
     const [engName, setEngName]=useState("")
     const [description, setDescription]=useState("")
+    const [birthYear, setBirthYear]=useState(0)
     const [gender, setGender]=useState(0)
     const [nationality, setNationality]=useState(null)
     const [nationalityId, setNationalityId]=useState(-1)
@@ -79,6 +80,7 @@ function PersonDetail(){
                 console.log(res.data)
                 setName(res.data.name)
                 setEngName(res.data.engName)
+                setBirthYear(res.data.birthYear)
                 setDescription(res.data.description)
                 setGender(res.data.gender)
                 setNationality(res.data.nationality)
@@ -424,7 +426,7 @@ function PersonDetail(){
                         <div className="profile_grid1">
                             
                             <div className="labels">
-                                <h2 style={{borderBottom:"2px solid"}}><strong>{name}/{engName}</strong>(Id: {id})</h2>
+                                <h2 style={{borderBottom:"2px solid", paddingBottom:"10px", marginBottom:"30px"}}><strong>{name}/{engName}</strong>(Id: {id})</h2>
                                 <div className="create-your-own-wrapper">
                                     
                                     <div style={{flex:"1"}}>
@@ -445,11 +447,15 @@ function PersonDetail(){
                                     <div style={{flex:"1", backgroundColor:"white"}}>
                                     
                                         <div className="row2FlexChild">
+                                            <span className="label">Birth Year: </span>
+                                            <span className="value">{birthYear}</span>
+                                        </div>
+                                        <div className="row2FlexChild">
                                             <span className="label">Gender: </span>
                                             <span className="value">{gender}</span>
                                         </div>
                                         <div className="row2FlexChild">
-                                            <span className="label">Nation: </span>
+                                            <span className="label">Nationality: </span>
                                             <div style={{width:"250px"}}>
                                                 {
                                                     nationality?
@@ -572,8 +578,8 @@ function PersonDetail(){
                                                     }
                                                         
                                                     </li>
-                                                )):
-                                                <>Null</>
+                                                ))
+                                                :<>Null</>
                                             }
                                             {
                                                 user && user.roles.includes("ROLE_ADMIN")?
@@ -592,21 +598,19 @@ function PersonDetail(){
                                         <div className="row2FlexChild"> 
                                             <span className="label">Articles:</span>
                                             <ul className="ultest2">
-                                            {   
-                                                articles.length!=0?
-                                                articles.map((ar, i)=>(
-                                                    <li key={i}><a href={ar.name}>{ar.name}</a>
-                                                    {
-                                                        user && user.roles.includes("ROLE_ADMIN")?
-                                                        <button className="marginLeft">x</button>
-                                                        :<></>
-                                                    }
-                                                        
-                                                    </li>
-                                                )):
-                                                <>Null</>
-                                            }
-                                            
+                                                {   
+                                                    articles.length!=0?
+                                                    articles.map((ar, i)=>(
+                                                        <li key={i}><Link to={`/articles/${ar.id}`}>{ar.name} | {ar.date}</Link>
+                                                        {
+                                                            user && user.roles.includes("ROLE_ADMIN")?
+                                                            <button className="marginLeft">x</button>
+                                                            :<></>
+                                                        }
+                                                        </li>
+                                                    ))
+                                                    :<>Null</>
+                                                }
                                             </ul> 
 
                                         </div>
@@ -618,6 +622,11 @@ function PersonDetail(){
                                                 broadcasts.length!=0?
                                                 broadcasts.map((b, i)=>(
                                                     <li key={i}><Link to={`/broadcasts/${b.id}`}>{b.name} | {b.date}</Link>
+                                                    {
+                                                        user && user.roles.includes("ROLE_ADMIN")?
+                                                        <button className="marginLeft">x</button>
+                                                        :<></>
+                                                    }
                                                     </li>
                                                 )):
                                                 <>Null</>
@@ -626,11 +635,6 @@ function PersonDetail(){
                                         
                                         </div>
                                     </div>
-                                </div>
-
-
-                                <div className="row2">
-                                    
                                 </div>
                                 
                             
@@ -656,8 +660,13 @@ function PersonDetail(){
                                             {
                                                 routines.map((rou, i)=>(
                                                 <tr key={i}>
-                                                    <td>
+                                                    <td style={{textAlign:"left"}}>
                                                         <Link to={`/routines/${rou.id}`}>
+                                                            {
+                                                                rou.competition?
+                                                                <>{rou.competition.name}-</>
+                                                                :<></>
+                                                            }
                                                             {rou.name}
                                                         </Link></td>
                                                     <td>{rou.genre} {rou.type}</td>
@@ -673,7 +682,7 @@ function PersonDetail(){
 
 
                                     <div className="row2">
-                                        <span className="label" style={{padding:"20px 0px 0px 0px"}}>Choreographic:</span>  
+                                        <span className="label" style={{padding:"20px 0px 0px 0px"}}>Choreography:</span>  
                                     </div>
                                     <div className="rowTable">
                                         
@@ -700,7 +709,7 @@ function PersonDetail(){
                                                     ))
                                                 }  
                                             </div>:
-                                        <p>Choreographic List is Empty</p>
+                                        <p>Choreography List is Empty</p>
                                         } 
                                     </div> 
 
@@ -709,20 +718,20 @@ function PersonDetail(){
                                         {
                                             revealPhotos!=false?
                                             <div className="rowButtonSelected" onClick={()=>handleRevealPhotos()}>
-                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Photos:</span>  
+                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Photos:{addresses.length}</span>  
                                             </div>
                                             :<div className="rowButton" onClick={()=>handleRevealPhotos()}>
-                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Photos:</span>  
+                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Photos:{addresses.length}</span>  
                                             </div>
                                         }
                                         
                                         {
                                             revealSuits!=false?
                                             <div className="rowButtonSelected" onClick={()=>handleRevealSuits()}>
-                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Swimsuits:</span>  
+                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Swimsuits:{swimsuitDetails.length}</span>  
                                             </div>
                                             :<div className="rowButton" onClick={()=>handleRevealSuits()}>
-                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Swimsuits:</span>  
+                                                <span className="label" style={{padding:"0px 0px 0px 0px"}}>Swimsuits:{swimsuitDetails.length}</span>  
                                             </div>
                                             
                                         }
